@@ -1,1 +1,1 @@
-# Jittery-Scheduler
+# Jittery Scheduler
