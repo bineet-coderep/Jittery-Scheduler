@@ -17,13 +17,12 @@ class GenTree:
     Generates a tree based on hit/miss of the scheduler.
     '''
 
-    def __init__(self,A,B,C,D,K,x0,T):
+    def __init__(self,A,B,C,D,K,T):
         self.A=A # Dynamics Matrix A
         self.B=B # Dynamics Matrix B
         self.C=C # Dynamics Matrix C
         self.D=D # Dynamics Matrix D
         self.K=K # Feedback controller matrix
-        self.x0=x0 # Initial Condition
         self.T=T # Max time for the simulation
         self.n=self.T # Maximum deadline misses allowed
 
@@ -67,11 +66,11 @@ class GenTree:
             )
 
         # Get a sequence of arrays based on `seqn`
-        x_0=np.vstack((self.x0,np.zeros((p*self.n + r, 1))))
+        #x_0=np.vstack((self.x0,np.zeros((p*self.n + r, 1))))
         t_max = len(seqn)
         t_since_last_hit = 0
-        x = np.zeros((p*(self.n+1) + r, t_max + 1));
-        x[:,0] = x_0[:,0];
+        #x = np.zeros((p*(self.n+1) + r, t_max + 1));
+        #x[:,0] = x_0[:,0];
         for t in range(1,t_max+1):
             if seqn[t-1]==1:
                 # Hit
@@ -82,9 +81,12 @@ class GenTree:
                 A = A_miss;
                 t_since_last_hit = t_since_last_hit + 1
             array_seqn.append(A)
-            x[:,t] = np.matmul(A, x[:,t-1])
+            #x[:,t] = np.matmul(A, x[:,t-1])
 
-        return (array_seqn,x)
+        #np.set_printoptions(precision=3)
+        #print(x)
+        #exit(0)
+        return array_seqn
 
     def getTree(self,pickleFlag=PICKLE_FLAG,picklePath=PICKLE_PATH):
         '''
@@ -96,14 +98,14 @@ class GenTree:
         time_taken=time.time()
         seqLim=2**self.T
         treeList=[]
-        trajs=[]
+        #trajs=[]
         for s in range(seqLim):
             bin_t=[int(b) for b in list(format(s,'b'))]
             seqn=(self.T-len(bin_t))*[0]+bin_t
             #print(seqn)
-            (array_seqn,traj)=self.getBranch(seqn)
+            array_seqn=self.getBranch(seqn)
             treeList.append((seqn,array_seqn))
-            trajs.append(traj)
+            #trajs.append(traj)
 
         #Viz.vizAllTraj(trajs)
 
@@ -114,16 +116,18 @@ class GenTree:
             with open(picklePath+'/'+'tree.pickle', 'wb') as handle:
                 pickle.dump(treeDict, handle)
 
+            '''
             # Pickle the `trajs`
             with open(picklePath+'/'+'all_trajectories.pickle', 'wb') as handle:
                 pickle.dump(trajs, handle)
+            '''
 
 
         print("\t Time Taken: ",time.time()-time_taken)
 
         print(">> STATUS: Tree Generated!\n")
 
-        return (treeDict,trajs)
+        return treeDict
 
     def dictionaryFy(treeList):
         '''

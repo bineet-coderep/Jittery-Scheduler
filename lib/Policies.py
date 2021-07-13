@@ -11,6 +11,7 @@ sys.path.append(PROJECT_ROOT)
 
 from Parameters import *
 import scipy.linalg as LA
+from lib.StarOperations import *
 
 
 class Policy:
@@ -18,9 +19,8 @@ class Policy:
     APIs to implement various policies to find out the maximum violation
     '''
 
-    def __init__(self,treeDict,trajs,T):
+    def __init__(self,treeDict,T):
         self.treeDict=treeDict
-        self.trajs=trajs # Required for convenience
         self.T=T
 
     def getAllMissTraj(self):
@@ -28,23 +28,43 @@ class Policy:
         Get the trajectory pertaining to all miss
         '''
 
-        return self.trajs[0]
+        return []
 
     def getAllHitTraj(self):
         '''
         Get the trajectory pertaining to all miss
         '''
 
-        return self.trajs[-1]
+        return []
 
     def getARandomTraj(self):
         '''
         Get a random trajectory
         '''
 
-        rd=random.randint(0,len(self.trajs)-1)
+        return []
 
-        return self.trajs[rd]
+    def seqn2Traj(self,seqn,initialSet):
+        '''
+        Given a seqn, returns the trajectory (and the sequence of arrys).
+        Where, the initialSet is represented as a star: <C,V,P>
+        '''
+
+        ctNode=0
+        arraySeqn=[]
+        rs=initialSet
+        trajs=[rs]
+        for child in seqn:
+            ctNode=self.treeDict[ctNode][1][child]
+            arraySeqn.append(self.treeDict[ctNode][2])
+            #print(self.treeDict[ctNode][2].shape,rs[0].shape)
+            #np.set_printoptions(precision=1)
+            #print(rs[1])
+            #print("\n")
+            rs=StarOp.prodMatStar(self.treeDict[ctNode][2],rs)
+            trajs.append(rs)
+
+        return (arraySeqn,trajs)
 
     def getMaxTrajHeuristic(self,pickleFlag=PICKLE_FLAG,picklePath=PICKLE_PATH):
         '''
