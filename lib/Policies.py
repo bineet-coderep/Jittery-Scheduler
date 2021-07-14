@@ -23,26 +23,29 @@ class Policy:
         self.treeDict=treeDict
         self.T=T
 
-    def getAllMissTraj(self):
+    def getAllMissTraj(self,initialSet):
         '''
         Get the trajectory pertaining to all miss
         '''
+        seqn=[0]*self.T
 
-        return []
+        return self.seqn2Traj(seqn,initialSet)
 
-    def getAllHitTraj(self):
+    def getAllHitTraj(self,initialSet):
         '''
         Get the trajectory pertaining to all miss
         '''
+        seqn=[1]*self.T
 
-        return []
+        return self.seqn2Traj(seqn,initialSet)
 
-    def getARandomTraj(self):
+    def getARandomTraj(self,initialSet):
         '''
         Get a random trajectory
         '''
+        seqn=[random.randint(0,1) for t in range(self.T)]
 
-        return []
+        return self.seqn2Traj(seqn,initialSet)
 
     def seqn2Traj(self,seqn,initialSet):
         '''
@@ -83,8 +86,8 @@ class Policy:
                 break;
             leftChildDyn=self.treeDict[leftChild][2]
             rightChildDyn=self.treeDict[rightChild][2]
-            leftChildSV=LA.svdvals(leftChildDyn)[0]
-            rightChildSV=LA.svdvals(rightChildDyn)[0]
+            leftChildSV=Policy.maxSVProj(leftChildDyn)[0]
+            rightChildSV=Policy.maxSVProj(rightChildDyn)[0]
             #print(leftChildSV,rightChildSV)
             if leftChildSV>rightChildSV:
                 ctNode=leftChild
@@ -130,15 +133,15 @@ class Policy:
                     rightChildDyn=self.treeDict[rightChild][2]
                     V_new_left=np.matmul(nodeDyn,V[leftChild])
                     V_new_right=np.matmul(nodeDyn,V[rightChild])
-                    V_new_left_SV=LA.svdvals(V_new_left)[0]
-                    V_new_right_SV=LA.svdvals(V_new_right)[0]
+                    V_new_left_SV=Policy.maxSVProj(V_new_left)[0]
+                    V_new_right_SV=Policy.maxSVProj(V_new_right)[0]
 
                     if parentNode!=-1:
                         parentNodeDyn=self.treeDict[parentNode][2]
                         ABP_left=np.matmul(parentNodeDyn,V_new_left)
                         ABP_right=np.matmul(parentNodeDyn,V_new_right)
-                        ABP_left_SVs=LA.svdvals(ABP_left)
-                        ABP_right_SVs=LA.svdvals(ABP_right)
+                        ABP_left_SVs=Policy.maxSVProj(ABP_left)
+                        ABP_right_SVs=Policy.maxSVProj(ABP_right)
 
                     if V_new_left_SV>V_new_right_SV:
                         if parentNode>=0:
@@ -183,3 +186,15 @@ class Policy:
                 seqn.append(1)
             ctNode=nextNode
         return seqn
+
+    def maxSVProj(A):
+        '''
+        Computes Max Singular Value of A, after projecting
+        it to x-y dimension
+        '''
+        P=np.zeros(A.shape)
+        P[0][0]=1
+        P[1][1]=1
+        PA=np.matmul(P,A)
+        svs=LA.svdvals(PA)
+        return svs

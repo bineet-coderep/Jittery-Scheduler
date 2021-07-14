@@ -312,12 +312,13 @@ class VizRS:
         th1=0
         th2=1
         plt.figure()
+        plt.plot([1],[1],color='m',label="Random ("+str(len(randTrajs))+")")
         for traj in randTrajs:
             for rs in traj:
                 (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
-                plt.plot(X,Y,'c.',alpha=0.05)
+                plt.scatter(X,Y,color='m',s=0.5)
 
-        colors=['k','r','g','b','y']
+        colors=['g','b','k','y','r']
         cCount=0
         for (traj,lb) in trajs:
             plt.plot([1],[1],color=colors[cCount],label=lb)
