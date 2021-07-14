@@ -16,14 +16,14 @@ from lib.Policies import *
 class Exp:
 
     def test3():
-        C=[0]*23
-        V=np.zeros((23,23))
+        C=[0]*19
+        V=np.zeros((19,19))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,12),(10,12)]
-        P=P+[(1,1)]*21
+        P=P+[(1,1)]*17
         initialSet=(C,V,P)
-        T=10
+        T=16
 
         treeObj=GenTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,T)
         treeDict=treeObj.getTree()
@@ -36,7 +36,10 @@ class Exp:
         (z,maxAlgoTraj)=policyObj.seqn2Traj(maxAlgoSeqn,initialSet)
         #print(maxAlgoSeqn)
         #exit(0)
-        trajs=[(maxHeuTraj,"Heuristic"),(maxAlgoTraj,"Optimal")]
+        (z,allMissTraj)=policyObj.getAllMissTraj(initialSet)
+        (z,allHitTraj)=policyObj.getAllHitTraj(initialSet)
+        (z,maxAlgoTraj)=policyObj.seqn2Traj(maxAlgoSeqn,initialSet)
+        trajs=[(allHitTraj,"All Hit"),(allMissTraj,"All Miss"),(maxHeuTraj,"Heuristic"),(maxAlgoTraj,"Optimal")]
         trajsComp=[]
         for j in range(20):
             (z,aRandTraj)=policyObj.getARandomTraj(initialSet)

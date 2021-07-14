@@ -318,7 +318,7 @@ class VizRS:
                 (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
                 plt.scatter(X,Y,color='m',s=0.5)
 
-        colors=['g','b','k','y','r']
+        colors=['k','y','g','b','r']
         cCount=0
         for (traj,lb) in trajs:
             plt.plot([1],[1],color=colors[cCount],label=lb)
