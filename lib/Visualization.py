@@ -146,13 +146,15 @@ class VizRS:
         obj=X+Y
         model.setObjective(obj,GRB.MAXIMIZE)
 
+        C_x=0
+        C_y=0
         for a in range(900):
             an=a/10
             if an==90:
-                model.addConstr(X==0,"Angle")
+                model.addConstr(X==0+C_x,"Angle")
             else:
                 m=math.tan(math.radians(an))
-                model.addConstr(Y==m*(X),"Angle")
+                model.addConstr(Y==m*(X)+C_y,"Angle")
             try:
                 model.optimize()
                 #model.write("dump.bas")
@@ -318,7 +320,7 @@ class VizRS:
                 (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
                 plt.scatter(X,Y,color='m',s=0.5)
 
-        colors=['k','y','g','b','r']
+        colors=['k','y','g','b','r','#25797d','#3d3461']
         cCount=0
         for (traj,lb) in trajs:
             plt.plot([1],[1],color=colors[cCount],label=lb)

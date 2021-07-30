@@ -69,7 +69,7 @@ class Policy:
 
         return (arraySeqn,trajs)
 
-    def getMaxTrajHeuristic(self,pickleFlag=PICKLE_FLAG,picklePath=PICKLE_PATH):
+    def getMaxTrajHeuristic(self,projs,vol=False,pickleFlag=PICKLE_FLAG,picklePath=PICKLE_PATH):
         '''
         Implements the heuristic that chooses the path with max sigular value,
         at each step, from root to node
@@ -86,8 +86,8 @@ class Policy:
                 break;
             leftChildDyn=self.treeDict[leftChild][2]
             rightChildDyn=self.treeDict[rightChild][2]
-            leftChildSV=Policy.maxSVProj(leftChildDyn)[0]
-            rightChildSV=Policy.maxSVProj(rightChildDyn)[0]
+            leftChildSV=Policy.maxSVProj(leftChildDyn,projs,vol)[0]
+            rightChildSV=Policy.maxSVProj(rightChildDyn,projs,vol)[0]
             #print(leftChildSV,rightChildSV)
             if leftChildSV>rightChildSV:
                 ctNode=leftChild
@@ -107,7 +107,7 @@ class Policy:
 
         return seqn
 
-    def getOptMaxTraj(self,pickleFlag=PICKLE_FLAG,picklePath=PICKLE_PATH):
+    def getOptMaxTraj(self,projs,vol=False,pickleFlag=PICKLE_FLAG,picklePath=PICKLE_PATH):
         '''
         Implements the DP like algorithm to find the maximum trajectory
         '''
@@ -133,15 +133,15 @@ class Policy:
                     rightChildDyn=self.treeDict[rightChild][2]
                     V_new_left=np.matmul(nodeDyn,V[leftChild])
                     V_new_right=np.matmul(nodeDyn,V[rightChild])
-                    V_new_left_SV=Policy.maxSVProj(V_new_left)[0]
-                    V_new_right_SV=Policy.maxSVProj(V_new_right)[0]
+                    V_new_left_SV=Policy.maxSVProj(V_new_left,projs,vol)[0]
+                    V_new_right_SV=Policy.maxSVProj(V_new_right,projs,vol)[0]
 
                     if parentNode!=-1:
                         parentNodeDyn=self.treeDict[parentNode][2]
                         ABP_left=np.matmul(parentNodeDyn,V_new_left)
                         ABP_right=np.matmul(parentNodeDyn,V_new_right)
-                        ABP_left_SVs=Policy.maxSVProj(ABP_left)
-                        ABP_right_SVs=Policy.maxSVProj(ABP_right)
+                        ABP_left_SVs=Policy.maxSVProj(ABP_left,projs,vol)
+                        ABP_right_SVs=Policy.maxSVProj(ABP_right,projs,vol)
 
                     if V_new_left_SV>V_new_right_SV:
                         if parentNode>=0:
@@ -187,14 +187,19 @@ class Policy:
             ctNode=nextNode
         return seqn
 
-    def maxSVProj(A):
+    def maxSVProj(A,projs,vol=False):
         '''
         Computes Max Singular Value of A, after projecting
-        it to x-y dimension
+        it using Matrix P
         '''
         P=np.zeros(A.shape)
-        P[0][0]=1
-        P[1][1]=1
+        for p in projs:
+            P[p][p]=1
         PA=np.matmul(P,A)
         svs=LA.svdvals(PA)
+        if vol==True:
+            volSV=1
+            for p in projs:
+                volSV=volSV*svs[p]
+            svs=[volSV]
         return svs
