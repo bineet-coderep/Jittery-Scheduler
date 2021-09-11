@@ -10,73 +10,9 @@ sys.path.append(PROJECT_ROOT)
 
 from Parameters import *
 from gurobipy import *
-
-class Viz:
-
-    def vizAllTraj(trajs,fname="all_trajectories"):
-        '''
-        Visualize all trajectories in trajs.
-
-        - Initial set marked with a green circle.
-        - `trajs[0]` is all miss --- marked in red.
-        - `trajs[-1]` is not miss --- marked in blue.
-        - Rest of the trajectories are in random color.
-        '''
-
-        # Mark Initial Set
-        plt.figure()
-        plt.scatter(trajs[-1][0][0],trajs[-1][1][0], s=120, facecolors='none', edgecolors='g')
-
-        # Rest of the trajectories
-        for i in range(1,len(trajs)-1):
-            plt.plot(trajs[i][0][:],trajs[i][1][:],linestyle='-',markersize=3,marker='o',linewidth=0.5)
-
-        # Print 4 Random Trajectories: To be deleted later
-        rTrajs=[random.randint(0,len(trajs)) for i in range(0)]
-        for j in rTrajs:
-            plt.plot(trajs[j][0][:],trajs[j][1][:],linestyle='--',markersize=4,marker='o',color='k',linewidth=1)
-
-
-        # All Miss Trajectory
-        plt.plot(trajs[0][0][:],trajs[0][1][:],linestyle='--',markersize=5,marker='o',color='r',label='All Miss',linewidth=2)
-
-        # No Miss Trajectory
-        plt.plot(trajs[-1][0][:],trajs[-1][1][:],linestyle='--',markersize=5,marker='o',color='b',label='No Miss',linewidth=2)
-
-
-        plt.legend()
-        plt.savefig(OUTPUT_PATH+'/'+fname)
-        plt.close()
-
-    def vizCompTraj(allTrajs,trajs,fname="compare_all_trajectories"):
-        '''
-        Visualize all trajectories in trajs.
-
-        - Initial set marked with a green circle.
-        - Rest of the trajectories are in random color.
-        - Visualize `trajs`
-        '''
-
-        # Mark Initial Set
-        plt.figure()
-        plt.scatter(allTrajs[-1][0][0],allTrajs[-1][1][0], s=120, facecolors='none', edgecolors='g')
-
-        # Rest of the trajectories
-        for i in range(1,len(allTrajs)-1):
-            plt.plot(allTrajs[i][0][:],allTrajs[i][1][:],linestyle='-',markersize=3,marker='o',color='cyan',linewidth=0.5)
-
-        for (traj,lb) in trajs:
-            if lb=="All Miss" or lb=="All Hit":
-                plt.plot(traj[0][:],traj[1][:],linestyle='-',markersize=5,marker='o',label=lb,linewidth=3)
-            else:
-
-                plt.plot(traj[0][:],traj[1][:],linestyle='--',markersize=5,marker='o',label=lb,linewidth=2)
-
-
-
-        plt.legend()
-        plt.savefig(OUTPUT_PATH+'/'+fname)
-        plt.close()
+import time
+import os
+import imageio
 
 
 class VizRS:
@@ -310,26 +246,34 @@ class VizRS:
 
         return (X_list,Y_list)
 
-    def vizAllRS(trajs,randTrajs,fname="all_trajectories"):
-        th1=0
-        th2=1
+    def vizAllRS(trajs,th1=0,th2=1,fname="all_trajectories"):
+
+        print(">> STATUS: Visualizing Reachable Sets . . .")
+        time_taken=time.time()
+
         plt.figure()
-        plt.plot([1],[1],color='m',label="Random ("+str(len(randTrajs))+")")
-        for traj in randTrajs:
-            for rs in traj:
-                (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
-                plt.scatter(X,Y,color='m',s=0.5)
 
-        colors=['k','y','g','b','r','#25797d','#3d3461']
-        cCount=0
-        for (traj,lb) in trajs:
-            plt.plot([1],[1],color=colors[cCount],label=lb)
-            for rs in traj:
-                #print(rs)
+        ct=0
+        fnames=[]
+        for rs in trajs:
+            #print(rs)
+            if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
                 (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
-                plt.scatter(X,Y,color=colors[cCount],s=0.5)
-            cCount=cCount+1
+                plt.scatter(X,Y,s=25)
+                fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
+                fnames.append(fnameTmp)
+                plt.savefig(fnameTmp)
+            ct=ct+1
+            #plt.close()
 
-        plt.legend()
-        plt.savefig(OUTPUT_PATH+'/'+fname)
-        plt.close()
+        with imageio.get_writer(OUTPUT_PATH+'/'+fname+'gif.gif', mode='I',fps=2) as writer:
+            for filename in fnames:
+                image = imageio.imread(filename)
+                writer.append_data(image)
+
+        for filename in set(fnames):
+            os.remove(filename)
+
+        time_taken=time.time()-time_taken
+        print("\tTime Taken: ",time_taken)
+        print(">> STATUS: Reachable Sets Visualized!")

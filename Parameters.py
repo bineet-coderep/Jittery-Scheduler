@@ -19,3 +19,5 @@ DATA_PATH=PROJECT_ROOT+'/'+'data/'
 
 
 PICKLE_FLAG=True
+
+VIZ_PER_COVERAGE=50 # Percentage of reachable sets covered

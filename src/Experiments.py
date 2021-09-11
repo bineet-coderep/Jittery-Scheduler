@@ -1,0 +1,48 @@
+'''
+This is to test various functionalities
+'''
+
+import os,sys
+import random,numpy
+PROJECT_ROOT = os.environ['SCHDLR_ROOT_DIR']
+sys.path.append(PROJECT_ROOT)
+
+from Parameters import *
+from lib.Benchmarks import *
+from lib.Visualization import *
+from lib.ULSGenerator import *
+from lib.Deviation import *
+
+class Exp:
+
+    def test1():
+
+        C=[0]*13
+        V=np.zeros((13,13))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=[(10,10),(10,10)]
+        P=P+[(1,1)]*11
+        initialSet=(C,V,P)
+        T=150
+
+        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,Benchmarks.DC.n)
+        #allMats=ulsGen.getAllPossibleMatrices()
+        uncertainMat=ulsGen.getUncertainMatrix()
+        print("Checkpoint1")
+        deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T)
+        reachSets=deviation.getReachSets()
+        print("Checkpoint2")
+        VizRS.vizAllRS(reachSets[0])
+
+
+
+
+
+
+
+
+
+
+if True:
+    Exp.test1()

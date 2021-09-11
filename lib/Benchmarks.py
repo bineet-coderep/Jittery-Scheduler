@@ -70,3 +70,4 @@ class Benchmarks:
         )
         h=0.050
         d=0.050
+        n=5 # Number of max deadline misses
