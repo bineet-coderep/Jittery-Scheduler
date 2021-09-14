@@ -19,7 +19,7 @@ class ULSGen:
         self.n=n # Maximum deadline misses allowed
 
 
-    def getAllPossibleMatrices(self):
+    def holdAndSkip(self):
         '''
         Returns all possible matrices possible
 
@@ -59,7 +59,53 @@ class ULSGen:
 
         return array_seqn
 
-    def getUncertainMatrix(self):
+    def zeroAndKill(self):
+        '''
+        Returns all possible matrices as per the zero and kill strategy
+        '''
+        p=self.A.shape[0]
+        r=self.B.shape[1]
+
+        array_seqn=[]
+
+        arrZ=np.zeros((r,r))
+
+        K_x = -self.K[:,0:p]
+        if self.K.shape[1] == p + r:
+            K_u = -self.K[:,p:p+r+1]
+        else:
+            K_u = np.zeros((p, r))
+
+        print(r)
+
+        print(np.hstack((self.A,self.B)))
+        print(np.hstack((K_x,arrZ)))
+        print(np.hstack((K_u,arrZ)))
+
+        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,arrZ))))
+
+        A_miss=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_u,arrZ))))
+
+        array_seqn=[A_hit,A_miss]
+
+        return array_seqn
+
+
+    def getAllPossibleMatrices(self,methodName="HoldnSkip"):
+        '''
+        Returns all possible matrices possible
+        '''
+
+        array_seqn=[]
+
+        if methodName=="HoldSkip":
+            array_seqn=self.holdAndSkip()
+        elif methodName=="ZeroKill":
+            array_seqn=self.zeroAndKill()
+
+        return array_seqn
+
+    def getUncertainMatrix(self,methodName="HoldnSkip"):
         '''
         Representation of an uncertain matrix:
             - A: nominal dynamics.
@@ -74,7 +120,7 @@ class ULSGen:
             - Convert them to an Uncertain maytrix
         '''
 
-        allMats=self.getAllPossibleMatrices()
+        allMats=self.getAllPossibleMatrices(methodName)
 
         d=allMats[0].shape[0] # Dimension of the system
 

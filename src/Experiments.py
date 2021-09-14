@@ -28,7 +28,7 @@ class Exp:
 
         ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,Benchmarks.DC.n)
         #allMats=ulsGen.getAllPossibleMatrices()
-        uncertainMat=ulsGen.getUncertainMatrix()
+        uncertainMat=ulsGen.getUncertainMatrix(methodName="ZeroKill")
         print("Checkpoint1")
         deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T)
         reachSets=deviation.getReachSets()

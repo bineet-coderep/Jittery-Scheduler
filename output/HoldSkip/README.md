@@ -13,5 +13,5 @@
 >> STATUS: Reachable Sets Computed!
 ```
 
-![all_trajs](https://github.com/bineet-coderep/Jittery-Scheduler/blob/ULSBased/output/all_trajectoriesgif.gif)
+![all_trajs](https://github.com/bineet-coderep/Jittery-Scheduler/blob/ULSBased/output/HoldSkip/all_trajectoriesgif.gif)
 
