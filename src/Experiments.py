@@ -16,6 +16,7 @@ from lib.Deviation import *
 class Exp:
 
     def test1():
+        # Using hold and skip
 
         C=[0]*13
         V=np.zeros((13,13))
@@ -28,7 +29,28 @@ class Exp:
 
         ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,Benchmarks.DC.n)
         #allMats=ulsGen.getAllPossibleMatrices()
-        uncertainMat=ulsGen.getUncertainMatrix(methodName="ZeroKill")
+        uncertainMat=ulsGen.getUncertainMatrix()
+        print("Checkpoint1")
+        deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T)
+        reachSets=deviation.getReachSets()
+        print("Checkpoint2")
+        VizRS.vizAllRS(reachSets[0])
+
+    def test2():
+        # Using zero and kill
+
+        C=[0]*3
+        V=np.zeros((3,3))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=[(10,10),(10,10)]
+        P=P+[(1,1)]*1
+        initialSet=(C,V,P)
+        T=150
+
+        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,Benchmarks.DC.n,"ZeroKill")
+        #allMats=ulsGen.getAllPossibleMatrices()
+        uncertainMat=ulsGen.getUncertainMatrix()
         print("Checkpoint1")
         deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T)
         reachSets=deviation.getReachSets()
@@ -45,4 +67,4 @@ class Exp:
 
 
 if True:
-    Exp.test1()
+    Exp.test2()

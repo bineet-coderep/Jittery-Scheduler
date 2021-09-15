@@ -10,13 +10,14 @@ class ULSGen:
     and parameters
     '''
 
-    def __init__(self,A,B,C,D,K,n):
+    def __init__(self,A,B,C,D,K,n,methodName="HoldSkip"):
         self.A=A # Dynamics
         self.B=B # Dynamics
         self.C=C # Dynamics
         self.D=D # Dynamics
         self.K=K # Control
         self.n=n # Maximum deadline misses allowed
+        self.methodName=methodName # Scheduling policy
 
 
     def holdAndSkip(self):
@@ -68,44 +69,36 @@ class ULSGen:
 
         array_seqn=[]
 
-        arrZ=np.zeros((r,r))
+        arrZ1=np.zeros((r,r))
+        arrZ2=np.zeros((r,p))
 
         K_x = -self.K[:,0:p]
-        if self.K.shape[1] == p + r:
-            K_u = -self.K[:,p:p+r+1]
-        else:
-            K_u = np.zeros((p, r))
 
-        print(r)
 
-        print(np.hstack((self.A,self.B)))
-        print(np.hstack((K_x,arrZ)))
-        print(np.hstack((K_u,arrZ)))
+        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,arrZ1))))
 
-        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,arrZ))))
-
-        A_miss=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_u,arrZ))))
+        A_miss=np.vstack((np.hstack((self.A,self.B)),np.hstack((arrZ2,arrZ1))))
 
         array_seqn=[A_hit,A_miss]
 
         return array_seqn
 
 
-    def getAllPossibleMatrices(self,methodName="HoldnSkip"):
+    def getAllPossibleMatrices(self):
         '''
         Returns all possible matrices possible
         '''
 
         array_seqn=[]
 
-        if methodName=="HoldSkip":
+        if self.methodName=="HoldSkip":
             array_seqn=self.holdAndSkip()
-        elif methodName=="ZeroKill":
+        elif self.methodName=="ZeroKill":
             array_seqn=self.zeroAndKill()
 
         return array_seqn
 
-    def getUncertainMatrix(self,methodName="HoldnSkip"):
+    def getUncertainMatrix(self):
         '''
         Representation of an uncertain matrix:
             - A: nominal dynamics.
@@ -120,7 +113,7 @@ class ULSGen:
             - Convert them to an Uncertain maytrix
         '''
 
-        allMats=self.getAllPossibleMatrices(methodName)
+        allMats=self.getAllPossibleMatrices()
 
         d=allMats[0].shape[0] # Dimension of the system
 
