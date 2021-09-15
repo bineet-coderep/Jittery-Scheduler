@@ -83,6 +83,29 @@ class ULSGen:
 
         return array_seqn
 
+    def holdAndKill(self):
+        '''
+        Returns all possible matrices as per the hold and kill strategy
+        '''
+        p=self.A.shape[0]
+        r=self.B.shape[1]
+
+        array_seqn=[]
+
+        arrZ1=np.zeros((r,r))
+        arrZ2=np.zeros((r,p))
+        arrI=np.zeros((r,r))
+
+        K_x = -self.K[:,0:p]
+
+
+        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,arrZ1))))
+
+        A_miss=np.vstack((np.hstack((self.A,self.B)),np.hstack((arrZ2,arrI))))
+
+        array_seqn=[A_hit,A_miss]
+
+        return array_seqn
 
     def getAllPossibleMatrices(self):
         '''
@@ -95,6 +118,11 @@ class ULSGen:
             array_seqn=self.holdAndSkip()
         elif self.methodName=="ZeroKill":
             array_seqn=self.zeroAndKill()
+        elif self.methodName=="HoldKill":
+            array_seqn=self.holdAndKill()
+        else:
+            print("Not Implemented!")
+            exit(0)
 
         return array_seqn
 

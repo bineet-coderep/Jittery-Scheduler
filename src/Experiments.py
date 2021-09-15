@@ -57,6 +57,27 @@ class Exp:
         print("Checkpoint2")
         VizRS.vizAllRS(reachSets[0])
 
+    def test3():
+        # Using hold and kill
+
+        C=[0]*3
+        V=np.zeros((3,3))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=[(10,10),(10,10)]
+        P=P+[(1,1)]*1
+        initialSet=(C,V,P)
+        T=150
+
+        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,Benchmarks.DC.n,"HoldKill")
+        #allMats=ulsGen.getAllPossibleMatrices()
+        uncertainMat=ulsGen.getUncertainMatrix()
+        print("Checkpoint1")
+        deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T)
+        reachSets=deviation.getReachSets()
+        print("Checkpoint2")
+        VizRS.vizAllRS(reachSets[0])
+
 
 
 
@@ -67,4 +88,4 @@ class Exp:
 
 
 if True:
-    Exp.test2()
+    Exp.test3()
