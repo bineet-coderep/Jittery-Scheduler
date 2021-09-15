@@ -10,7 +10,7 @@
 
 ```shell
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  70.61858320236206
+	Time Taken:  2.865734338760376
 >> STATUS: Reachable Sets Computed!
 ```
 
