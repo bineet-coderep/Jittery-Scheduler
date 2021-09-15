@@ -4,7 +4,7 @@
 
 * Initial Point = (10,10). Could have also started with a set.
 * Time Steps = 150
-* Policy: Hold and Skip
+* Policy: Hold and Kill
 
 ## Results:
 
@@ -14,5 +14,5 @@
 >> STATUS: Reachable Sets Computed!
 ```
 
-![all_trajs](https://github.com/bineet-coderep/Jittery-Scheduler/blob/ULSBased/output/HoldSkip/all_trajectoriesgif.gif)
+![all_trajs](https://github.com/bineet-coderep/Jittery-Scheduler/blob/ULSBased/output/HoldKill/all_trajectoriesgif.gif)
 
