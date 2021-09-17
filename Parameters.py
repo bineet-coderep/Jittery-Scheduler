@@ -18,6 +18,8 @@ PICKLE_PATH=PROJECT_ROOT+'/'+'pickles/'
 DATA_PATH=PROJECT_ROOT+'/'+'data/'
 
 
+BOUNDED_TREE_STEP=5
+
 PICKLE_FLAG=True
 
-VIZ_PER_COVERAGE=50 # Percentage of reachable sets covered
+VIZ_PER_COVERAGE=100 # Percentage of reachable sets covered

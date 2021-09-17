@@ -2,6 +2,7 @@ import os,sys
 PROJECT_ROOT = os.environ['SCHDLR_ROOT_DIR']
 sys.path.append(PROJECT_ROOT)
 import copy
+from Parameters import *
 import numpy as np
 import numpy.linalg as LA
 from gurobipy import *
@@ -121,6 +122,50 @@ class SetOp:
                 dia=d
 
         return dia
+
+    def boxHull(rsList):
+        '''
+        Given a set of reachable sets, compute a box-hull
+        '''
+        n=len(rsList[0][0])
+        r=rsList[0][1].shape[1]
+
+        U=np.zeros((n,1),dtype=object)
+
+        for i in range(n):
+            U[i][0]=(9999999999999,-9999999999999)
+
+        for rs in rsList:
+            P=rs[2]
+            Vp=rs[1]
+            Cp=rs[0]
+            for i in range(n):
+                s=0
+                s_min=0
+                s_max=0
+                for j in range(r):
+                    s=s+(mp.mpi(P[j][0],P[j][1])*Vp[i][j])
+                s=s+Cp[i]
+                s_min=float(mp.nstr(s).split(',')[0][1:])
+                s_max=float(mp.nstr(s).split(',')[1][:-1])
+                s_new_min=U[i][0][0]
+                s_new_max=U[i][0][1]
+                if s_min<U[i][0][0]:
+                    s_new_min=s_min
+                if s_max>U[i][0][1]:
+                    s_new_max=s_max
+                U[i][0]=(s_new_min,s_new_max)
+
+        C_new=np.zeros(n)
+        V_new=np.identity(n)
+        P_new=[]
+
+        for i in range(n):
+            P_new.append((U[i][0][0],U[i][0][1]))
+
+        box=(C_new,V_new,P_new)
+
+        return box
 
 
 

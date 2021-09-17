@@ -20,7 +20,7 @@ class ULSGen:
         self.methodName=methodName # Scheduling policy
 
 
-    def holdAndSkip(self):
+    def holdAndSkipOld(self):
         '''
         Returns all possible matrices possible
 
@@ -48,6 +48,44 @@ class ULSGen:
             K_u = -self.K[:,p:p+r+1]
         else:
             K_u = np.zeros((p, r))
+
+        A_hit=np.zeros(((self.n+1)*p + r, (self.n+1)*p + r, self.n+1))
+        for i in range(self.n):
+            A_hit[:,:,i]=np.vstack(
+            (np.hstack((self.A,np.zeros((p,self.n*p)),self.B)),
+            np.hstack((np.identity(self.n*p),np.zeros((self.n*p,p+r)))),
+            np.hstack((np.zeros((r,i*p)),K_x,np.zeros((r,(self.n-i)*p)),K_u)))
+            )
+            array_seqn.append(A_hit[:,:,i])
+
+        return array_seqn
+
+    def holdAndSkip(self):
+        '''
+        Returns all possible matrices possible
+
+        This code has been taken from the Matlab implementation,
+        `hold_and_skip_next.m`, by Clara Hobbs (also provided in this repository).
+        '''
+
+        p=self.A.shape[0]
+        r=self.B.shape[1]
+
+        array_seqn=[]
+
+
+        # Miss matrix
+        A_miss=np.vstack(
+        (np.hstack((self.A,np.zeros((p,self.n*p)),self.B)),
+        np.hstack((np.identity(self.n*p),np.zeros((self.n*p,p+r)))),
+        np.hstack((np.zeros((r,(self.n+1)*p)),np.identity(r))))
+        )
+        array_seqn.append(copy.copy(A_miss))
+
+        # Hit matrix
+        K_x = -self.K[:,0:p]
+
+        K_u = np.zeros((r, r))
 
         A_hit=np.zeros(((self.n+1)*p + r, (self.n+1)*p + r, self.n+1))
         for i in range(self.n):
