@@ -15,7 +15,7 @@
 >> STATUS: Reachable Sets Computed!!
 ```
 
-![all_trajectories_hold_skip](/https://github.com/bineet-coderep/Jittery-Scheduler/blob/ULSBased/output/BoundedTree/all_trajectories_hold_skip.gif)
+![all_trajectories_hold_skip](all_trajectories_hold_skip.gif)
 
 ## Hold and Kill
 
