@@ -115,13 +115,12 @@ class Exp:
         initialSet=(C,V,P)
         T=150
 
-        boundedTree=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,T,initialSet,methodName="HoldKill")
+        boundedTree=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,T,initialSet,methodName="ZeroKill")
 
         rsList=boundedTree.getBoundedTreeReachSets()
 
         VizRS.vizAllRS(rsList)
 
-        print("Checkpoint2")
 
 
 
