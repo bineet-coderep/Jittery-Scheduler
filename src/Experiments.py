@@ -106,12 +106,11 @@ class Exp:
     def test5():
         # Using hold and skip
 
-        C=[0]*3
+        C=[11,11]+[0]*1
         V=np.zeros((3,3))
         V[0][0]=1.0
         V[1][1]=1.0
-        P=[(10,10),(10,10)]
-        P=P+[(1,1)]*1
+        P=[(-1,1)]*3
         initialSet=(C,V,P)
         T=150
 
@@ -150,4 +149,4 @@ class Exp:
 
 
 if True:
-    Exp.test6()
+    Exp.test5()

@@ -13,6 +13,8 @@ from gurobipy import *
 import time
 import os
 import imageio
+from lib.StarOperations import *
+#import pypolycontain as pp
 
 
 class VizRS:
@@ -260,6 +262,44 @@ class VizRS:
             if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
                 (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
                 plt.scatter(X,Y,s=2)
+                fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
+                fnames.append(fnameTmp)
+                plt.savefig(fnameTmp)
+            ct=ct+1
+            #plt.close()
+
+        with imageio.get_writer(OUTPUT_PATH+'/'+fname+'gif.gif', mode='I',fps=2) as writer:
+            for filename in fnames:
+                image = imageio.imread(filename)
+                writer.append_data(image)
+
+        for filename in set(fnames):
+            os.remove(filename)
+
+        time_taken=time.time()-time_taken
+        print("\tTime Taken: ",time_taken)
+        print(">> STATUS: Reachable Sets Visualized!")
+
+
+    def vizAllRS2(trajs,th1=0,th2=1,fname="all_trajectories"):
+
+        print(">> STATUS: Visualizing Reachable Sets . . .")
+        time_taken=time.time()
+
+        plt.figure()
+
+        ct=0
+        fnames=[]
+        zonoList=[]
+        for rs in trajs:
+            #print(rs)
+            if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
+
+                # Plot Here
+                z=StarOp.star2Zono(rs)
+                zonoList.append(z)
+                pp.visualize(zonoList,tuple_of_projection_dimensions=[0,1])
+
                 fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
                 fnames.append(fnameTmp)
                 plt.savefig(fnameTmp)
