@@ -123,6 +123,26 @@ class Exp:
 
         print("Checkpoint2")
 
+    def test6():
+        # Using hold and skip-next (any number of misses)
+
+        C=[0]*5
+        V=np.zeros((5,5))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=[(10,10),(10,10)]
+        P=P+[(1,1)]*11
+        initialSet=(C,V,P)
+        T=150
+
+        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,Benchmarks.DC.n,"HoldSkipAny")
+        #allMats=ulsGen.getAllPossibleMatrices()
+        uncertainMat=ulsGen.getUncertainMatrix()
+        print("Checkpoint1")
+        deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T)
+        reachSets=deviation.getReachSets()
+        print("Checkpoint2")
+        VizRS.vizAllRS(reachSets[0])
 
 
 
@@ -131,4 +151,4 @@ class Exp:
 
 
 if True:
-    Exp.test5()
+    Exp.test6()

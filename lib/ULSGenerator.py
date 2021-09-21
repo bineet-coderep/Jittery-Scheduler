@@ -145,6 +145,43 @@ class ULSGen:
 
         return array_seqn
 
+    def holdAndSkipAny(self):
+        """
+        Returns all matrices for a second formulation of Hold&Skip-Next
+
+        This formulation allows any arbitrarily-large number of consecutive
+        deadline misses with a constant-sized augmented state space.  This
+        makes computation faster (since the A matrices are smaller), but the
+        results looser (since the overapproximation gets even worse).
+        """
+        p, r = self.B.shape
+
+        # Split apart the two pieces of K, if necessary
+        K_x = -self.K[:,0:p]
+        if self.K.shape[1] == p + r:
+            K_u = -self.K[:,p:p+r+1]
+        else:
+            K_u = np.zeros((r, r))
+
+        # Hit following hit
+        A_HH = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, 2*p + r))],
+                         [K_x, np.zeros((r, p)), K_u]])
+        # Hit following miss
+        A_MH = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, 2*p + r))],
+                         [np.zeros((r, p)), K_x, K_u]])
+        # Miss following hit
+        A_HM = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.eye(p), np.zeros((p, p + r))],
+                         [np.zeros((r, 2*p)), np.eye(r)]])
+        # Miss following miss
+        A_MM = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, p)), np.eye(p), np.zeros((p, r))],
+                         [np.zeros((r, 2*p)), np.eye(r)]])
+
+        return [A_HH, A_MH, A_HM, A_MM]
+
     def getAllPossibleMatrices(self):
         '''
         Returns all possible matrices possible
@@ -158,6 +195,8 @@ class ULSGen:
             array_seqn=self.zeroAndKill()
         elif self.methodName=="HoldKill":
             array_seqn=self.holdAndKill()
+        elif self.methodName=="HoldSkipAny":
+            array_seqn=self.holdAndSkipAny()
         else:
             print("Not Implemented!")
             exit(0)
