@@ -152,7 +152,7 @@ class Exp:
         P=[(10,10),(10,10)]
         P=P+[(1,1)]*11
         initialSet=(C,V,P)
-        T=20
+        T=150
 
         fsm=FSM(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,initialSet,T)
 
