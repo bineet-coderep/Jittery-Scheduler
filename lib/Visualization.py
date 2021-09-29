@@ -317,3 +317,44 @@ class VizRS:
         time_taken=time.time()-time_taken
         print("\tTime Taken: ",time_taken)
         print(">> STATUS: Reachable Sets Visualized!")
+
+    def vizAllTwoMissesFSM(S0,S1,S2,th1=0,th2=1,fname="fsm_all_trajectories"):
+
+        print(">> STATUS: Visualizing Reachable Sets . . .")
+        time_taken=time.time()
+
+        plt.figure()
+
+        ct=0
+        fnames=[]
+        for (s0,s1,s2) in zip(S0,S1,S2):
+            #print(rs)
+            if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
+                # Visualize S0
+                (X,Y)=VizRS.getPlotsLineFine(s0,th1,th2)
+                plt.scatter(X,Y,s=2)
+                # Visualize S1
+                if s1!=-1:
+                    (X1,Y1)=VizRS.getPlotsLineFine(s1,th1,th2)
+                    plt.scatter(X1,Y1,s=2)
+                # Visualize S2
+                if s2!=-1:
+                    (X2,Y2)=VizRS.getPlotsLineFine(s2,th1,th2)
+                    plt.scatter(X2,Y2,s=2)
+                fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
+                fnames.append(fnameTmp)
+                plt.savefig(fnameTmp)
+            ct=ct+1
+            #plt.close()
+
+        with imageio.get_writer(OUTPUT_PATH+'/'+fname+'gif.gif', mode='I',fps=2) as writer:
+            for filename in fnames:
+                image = imageio.imread(filename)
+                writer.append_data(image)
+
+        for filename in set(fnames):
+            os.remove(filename)
+
+        time_taken=time.time()-time_taken
+        print("\tTime Taken: ",time_taken)
+        print(">> STATUS: Reachable Sets Visualized!")

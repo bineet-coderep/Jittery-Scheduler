@@ -14,6 +14,7 @@ from lib.ULSGenerator import *
 from lib.Deviation import *
 from lib.LQRSolver import *
 from lib.BoundedTree import *
+from lib.FSMBased import *
 
 class Exp:
 
@@ -143,10 +144,29 @@ class Exp:
         VizRS.vizAllRS(reachSets[0])
 
 
+    def test7():
+        C=[0]*5
+        V=np.zeros((5,5))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=[(10,10),(10,10)]
+        P=P+[(1,1)]*11
+        initialSet=(C,V,P)
+        T=20
+
+        fsm=FSM(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,initialSet,T)
+
+        (S0,S1,S2)=fsm.twoMissesholdAndSkipAny()
+
+        VizRS.vizAllTwoMissesFSM(S0,S1,S2)
+
+
+
+
 
 
 
 
 
 if True:
-    Exp.test5()
+    Exp.test7()
