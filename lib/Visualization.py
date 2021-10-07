@@ -358,3 +358,42 @@ class VizRS:
         time_taken=time.time()-time_taken
         print("\tTime Taken: ",time_taken)
         print(">> STATUS: Reachable Sets Visualized!")
+
+    def vizAllNMissesFSM(statesList,th1=0,th2=1,fname="fsm_all_trajectories"):
+
+        print(">> STATUS: Visualizing Reachable Sets . . .")
+        time_taken=time.time()
+        nStates=len(statesList)
+        T=len(statesList[0])
+
+        plt.figure()
+
+        ct=0
+        fnames=[]
+        for t in range(T):
+            #print(rs)
+            if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
+
+                for i in range(nStates):
+                    s_i=statesList[i][t]
+                    if s_i!=-1:
+                        (X,Y)=VizRS.getPlotsLineFine(s_i,th1,th2)
+                        plt.scatter(X,Y,s=2)
+
+                fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
+                fnames.append(fnameTmp)
+                plt.savefig(fnameTmp)
+            ct=ct+1
+            #plt.close()
+
+        with imageio.get_writer(OUTPUT_PATH+'/'+fname+'gif.gif', mode='I',fps=2) as writer:
+            for filename in fnames:
+                image = imageio.imread(filename)
+                writer.append_data(image)
+
+        for filename in set(fnames):
+            os.remove(filename)
+
+        time_taken=time.time()-time_taken
+        print("\tTime Taken: ",time_taken)
+        print(">> STATUS: Reachable Sets Visualized!")

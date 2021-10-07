@@ -156,9 +156,25 @@ class Exp:
 
         fsm=FSM(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,initialSet,T)
 
-        (S0,S1,S2)=fsm.twoMissesholdAndSkipAny()
+        (S0,S1,S2)=fsm.twoMissesHoldAndSkipAny()
 
         VizRS.vizAllTwoMissesFSM(S0,S1,S2)
+
+    def test8():
+        C=[0]*5
+        V=np.zeros((5,5))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=[(10,10),(10,10)]
+        P=P+[(1,1)]*11
+        initialSet=(C,V,P)
+        T=150
+
+        fsm=FSM(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,initialSet,T)
+
+        statesList=fsm.threeMissesHoldAndSkipAny()
+
+        VizRS.vizAllNMissesFSM(statesList)
 
 
 
@@ -169,4 +185,4 @@ class Exp:
 
 
 if True:
-    Exp.test7()
+    Exp.test8()
