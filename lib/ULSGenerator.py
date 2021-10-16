@@ -88,7 +88,7 @@ class ULSGen:
         K_u = np.zeros((r, r))
 
         A_hit=np.zeros(((self.n+1)*p + r, (self.n+1)*p + r, self.n+1))
-        for i in range(self.n):
+        for i in range(self.n+1):
             A_hit[:,:,i]=np.vstack(
             (np.hstack((self.A,np.zeros((p,self.n*p)),self.B)),
             np.hstack((np.identity(self.n*p),np.zeros((self.n*p,p+r)))),

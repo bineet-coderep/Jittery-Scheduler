@@ -130,3 +130,75 @@ class FSM:
         print(">> STATUS: Reachable Sets Computed!")
 
         return [S0,S1,S2,S3]
+
+
+class RecRel:
+
+    def __init__(self,automaton,initSet,T,nominalReachSet):
+        self.automaton=automaton
+        self.initSet=initSet
+        self.T=T
+        self.nominalReachSet=nominalReachSet
+
+    def getReachSets(self):
+        print(">> STATUS: Computing Reachable Sets . . .")
+        time_taken=time.time()
+        N=self.automaton[0]
+        hList=self.automaton[1]
+        mList=self.automaton[2]
+        stateList=[]
+
+        # Initilize
+        state0=[self.initSet]
+        stateList.append(copy.copy(state0))
+        for k in range(N):
+            stateList.append([-1])
+
+        for t in range(1,self.T):
+            # Update stateList[0]
+            sTmp=[]
+            for k in range(N+1):
+                if stateList[k][-1]!=-1:
+                    sTmp.append(StarOp.prodMatStar(hList[k],stateList[k][-1]))
+            if len(sTmp)>1:
+                sTmpBox=SetOp.boxHull(sTmp)
+            else:
+                sTmpBox=copy.copy(sTmp[0])
+            stateList[0].append(copy.copy(sTmpBox))
+
+            # Update stateList[k]
+            for k in range(1,N+1):
+                if t>=k:
+                    stateList[k].append(StarOp.prodMatStar(mList[k-1],stateList[k-1][t-1]))
+                else:
+                    stateList[k].append(-1)
+
+        print("\tTime Taken: ",time.time()-time_taken)
+        print(">> STATUS: Reachable Sets Computed!")
+
+        return stateList
+
+    def getDeviations(self,p):
+        stateList=self.getReachSets()
+        K=len(stateList) # Number of states
+        print(">> STATUS: Computing Deviations . . .")
+        time_taken=time.time()
+        maxD=-7
+        maxT=-7
+        dList=[0]
+        t_max=len(self.nominalReachSet)
+        for t in range(1,t_max-1):
+            d_t=-7
+            for k in range(K):
+                if stateList[k][t]!=-1:
+                    d_tk=SetOp.getDistance(self.nominalReachSet[t],stateList[k][t],p)
+                    if d_tk>d_t:
+                        d_t=d_tk
+            if d_t>maxD:
+                maxD=d_t
+                maxT=t
+            dList.append(d_t)
+        time_taken=time.time()-time_taken
+        print("\tTime Taken: ",time_taken)
+        print(">> STATUS: Deviations Computed!")
+        return (stateList,dList,maxT)

@@ -167,6 +167,37 @@ class SetOp:
 
         return box
 
+    def getDistance(st1,st2,p):
+        '''
+        Compute the distance between st1 and st2
+        '''
+        boxSt1=SetOp.boxHull([st1])[2][:p]
+        boxSt2=SetOp.boxHull([st2])[2][:p]
+
+        # Compute coordinates of boxSt1
+        coordSt1=[]
+        for element in itertools.product(*boxSt1):
+            coordSt1.append(element)
+
+        # Compute coordinates of boxSt2
+        coordSt2=[]
+        for element in itertools.product(*boxSt2):
+            coordSt2.append(element)
+
+        d=-9
+
+        for X1 in coordSt1:
+            for X2 in coordSt2:
+                t1=0
+                for (x1,x2) in zip(X1,X2):
+                    t1+=(x1-x2)**2
+                d_t=math.sqrt(t1)
+                if d_t>d:
+                    d=d_t
+
+        return d
+
+
 
 
 if False:

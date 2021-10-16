@@ -248,7 +248,7 @@ class VizRS:
 
         return (X_list,Y_list)
 
-    def vizAllRS(trajs,th1=0,th2=1,fname="all_trajectories"):
+    def vizAllRS(trajs,nomTrajs,th1=0,th2=1,fname="all_trajectories"):
 
         print(">> STATUS: Visualizing Reachable Sets . . .")
         time_taken=time.time()
@@ -257,11 +257,14 @@ class VizRS:
 
         ct=0
         fnames=[]
-        for rs in trajs:
+        for (rs,nom) in zip(trajs,nomTrajs):
             #print(rs)
             if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
                 (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
                 plt.scatter(X,Y,s=2)
+                (X_nom,Y_nom)=VizRS.getPlotsLineFine(nom,th1,th2)
+                print(X_nom,Y_nom)
+                plt.scatter(X_nom,Y_nom,s=2,c="k")
                 fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
                 fnames.append(fnameTmp)
                 plt.savefig(fnameTmp)
@@ -279,6 +282,29 @@ class VizRS:
         time_taken=time.time()-time_taken
         print("\tTime Taken: ",time_taken)
         print(">> STATUS: Reachable Sets Visualized!")
+
+    def vizDevs(devList,maxT):
+        T=len(devList)
+        X=list(range(T))
+        plt.figure()
+        plt.plot(X,devList)
+        plt.scatter(maxT,devList[maxT],s=50,c='red')
+        plt.show()
+
+    def vizAllDevs(labels,devLists,maxTLists,fname="benchmark"):
+
+        T=len(devLists[0])
+        X=list(range(T))
+        plt.figure()
+
+        for (lb,devList,maxT) in zip(labels,devLists,maxTLists):
+            plt.plot(X,devList,label=lb)
+            plt.scatter(maxT,devList[maxT],s=100)
+            plt.text(maxT,devList[maxT],str(maxT))
+
+        plt.legend()
+        plt.savefig(OUTPUT_PATH+'/'+fname+"_all_devs")
+
 
 
     def vizAllRS2(trajs,th1=0,th2=1,fname="all_trajectories"):
