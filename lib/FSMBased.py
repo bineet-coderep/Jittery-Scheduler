@@ -154,7 +154,7 @@ class RecRel:
         for k in range(N):
             stateList.append([-1])
 
-        for t in range(1,self.T):
+        for t in range(1,self.T+1):
             # Update stateList[0]
             sTmp=[]
             for k in range(N+1):
@@ -187,7 +187,7 @@ class RecRel:
         maxT=-7
         dList=[0]
         t_max=len(self.nominalReachSet)
-        for t in range(1,t_max-1):
+        for t in range(1,t_max):
             d_t=-7
             for k in range(K):
                 if stateList[k][t]!=-1:

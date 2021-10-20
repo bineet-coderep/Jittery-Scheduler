@@ -316,16 +316,11 @@ class VizRS:
 
         ct=0
         fnames=[]
-        zonoList=[]
         for rs in trajs:
             #print(rs)
             if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
-
-                # Plot Here
-                z=StarOp.star2Zono(rs)
-                zonoList.append(z)
-                pp.visualize(zonoList,tuple_of_projection_dimensions=[0,1])
-
+                (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
+                plt.scatter(X,Y,s=2)
                 fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
                 fnames.append(fnameTmp)
                 plt.savefig(fnameTmp)

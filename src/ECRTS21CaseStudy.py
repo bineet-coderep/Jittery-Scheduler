@@ -25,25 +25,25 @@ class ULSBased:
         - Returns the maximum deviation from the nominal behavior
         - All possible sequences of hit/miss
         '''
-        C=[0]*3
-        V=np.zeros((3,3))
+        C=[0]*4
+        V=np.zeros((4,4))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,10),(10,10)]
-        P=P+[(0,0)]*1
+        P=P+[(0,0)]*2
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
         MAX_DEADLINE=-1 # Any
         methodName="HoldKill"
-        p=Benchmarks.DC.A.shape[0]
+        p=Benchmarks.ECRTS21.A.shape[0]
 
         print(">> REPORT.\tMethod: ULS.\tPolicy: ",methodName,".")
         time_taken=time.time()
 
-        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetHoldKill(initialSet,nominalSeqn)
 
-        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,MAX_DEADLINE,methodName)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,MAX_DEADLINE,methodName)
         uncertainMat=ulsGen.getUncertainMatrix()
 
         deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
@@ -62,25 +62,25 @@ class ULSBased:
         - Returns the maximum deviation from the nominal behavior
         - All possible sequences of hit/miss
         '''
-        C=[0]*3
-        V=np.zeros((3,3))
+        C=[0]*4
+        V=np.zeros((4,4))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,10),(10,10)]
-        P=P+[(0,0)]*1
+        P=P+[(0,0)]*2
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
         MAX_DEADLINE=-1 # Any
         methodName="ZeroKill"
-        p=Benchmarks.DC.A.shape[0]
+        p=Benchmarks.ECRTS21.A.shape[0]
 
         print(">> REPORT.\tMethod: ULS.\tPolicy: ",methodName,".")
         time_taken=time.time()
 
-        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetZeroKill(initialSet,nominalSeqn)
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetZeroKill(initialSet,nominalSeqn)
 
-        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,MAX_DEADLINE,methodName)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,MAX_DEADLINE,methodName)
         uncertainMat=ulsGen.getUncertainMatrix()
 
         deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
@@ -99,33 +99,33 @@ class ULSBased:
         - Returns the maximum deviation from the nominal behavior
         - 3 consecutive misses allowed
         '''
-        C_nom=[0]*3
-        V_nom=np.zeros((3,3))
+        C_nom=[0]*4
+        V_nom=np.zeros((4,4))
         V_nom[0][0]=1.0
         V_nom[1][1]=1.0
         P_nom=[(10,10),(10,10)]
-        P_nom=P_nom+[(0,0)]*1
+        P_nom=P_nom+[(0,0)]*2
         initialSet_nom=(C_nom,V_nom,P_nom)
 
-        C=[0]*9
-        V=np.zeros((9,9))
+        C=[0]*10
+        V=np.zeros((10,10))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,10),(10,10)]
-        P=P+[(0,0)]*7
+        P=P+[(0,0)]*8
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
         MAX_DEADLINE=3 # Three
         methodName="HoldSkip"
-        p=Benchmarks.DC.A.shape[0]
+        p=Benchmarks.ECRTS21.A.shape[0]
 
         print(">> REPORT.\tMethod: ULS.\tPolicy: ",methodName,".")
         time_taken=time.time()
 
-        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldSkip(initialSet_nom,nominalSeqn)
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetHoldSkip(initialSet_nom,nominalSeqn)
 
-        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,MAX_DEADLINE,methodName)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,MAX_DEADLINE,methodName)
         uncertainMat=ulsGen.getUncertainMatrix()
 
         deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
@@ -145,25 +145,25 @@ class ULSBased:
         - All possible sequences of hit/miss
         '''
 
-        C=[0]*5
-        V=np.zeros((5,5))
+        C=[0]*6
+        V=np.zeros((6,6))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,10),(10,10)]
-        P=P+[(0,0)]*5
+        P=P+[(0,0)]*4
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
         MAX_DEADLINE=-1 # Any
         methodName="HoldSkipAny"
-        p=Benchmarks.DC.A.shape[0]
+        p=Benchmarks.ECRTS21.A.shape[0]
 
         print(">> REPORT.\tMethod: ULS.\tPolicy: ",methodName,".")
         time_taken=time.time()
 
-        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldSkipAny(initialSet,nominalSeqn)
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetHoldSkipAny(initialSet,nominalSeqn)
 
-        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,MAX_DEADLINE,methodName)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,MAX_DEADLINE,methodName)
         uncertainMat=ulsGen.getUncertainMatrix()
 
         deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
@@ -189,11 +189,11 @@ class ULSBased:
         (dList_HSA,maxT_HSA)=ULSBased.holdAndSkipAny() # Any number of miss
         print("\n-----------\n")
 
-        labels=["ZeroKill"]
-        allDevLists=[dList_ZK]
-        maxTLists=[maxT_ZK]
+        labels=["HoldKill","ZeroKill","HoldSkip(3)","HoldSkipAny"]
+        allDevLists=[dList_HK,dList_ZK,dList_HS,dList_HSA]
+        maxTLists=[maxT_HK,maxT_ZK,maxT_HS,maxT_HSA]
 
-        VizRS.vizAllDevs(labels,allDevLists,maxTLists,"dc_motor_uls")
+        VizRS.vizAllDevs(labels,allDevLists,maxTLists,"ecrts21_uls")
 
 
 class FSMBased:
@@ -204,26 +204,27 @@ class FSMBased:
         - Returns the maximum deviation from the nominal behavior
         - N consecutive misses allowed
         '''
-        C=[0]*3
-        V=np.zeros((3,3))
+        C=[0]*4
+        V=np.zeros((4,4))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,10),(10,10)]
-        P=P+[(0,0)]*1
+        P=P+[(0,0)]*2
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
-        MAX_DEADLINE=3
+        MAX_DEADLINE=1
         methodName="HoldKill"
-        p=Benchmarks.DC.A.shape[0]
+        p=Benchmarks.ECRTS21.A.shape[0]
 
         print(">> REPORT.\tMethod: Recurrence Relation.\tPolicy: ",methodName,".\tMax Deadline Miss: ",MAX_DEADLINE)
         time_taken=time.time()
 
-        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetHoldKill(initialSet,nominalSeqn)
+        #VizRS.vizAllRS2(nominalReachSet)
 
         # Get the matrices
-        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,MAX_DEADLINE,methodName)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,MAX_DEADLINE,methodName)
         matList=ulsGen.getAllPossibleMatrices()
 
         hList=[matList[0]]*(MAX_DEADLINE+1)
@@ -234,10 +235,12 @@ class FSMBased:
         rec=RecRel(automaton,initialSet,T,nominalReachSet)
         stateList,dList,maxT=rec.getDeviations(p)
 
+        #VizRS.vizAllNMissesFSM(stateList)
+
         print("\tMax Deviation: ",dList[maxT],";\t At time step: ",maxT)
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
-        #VizRS.vizDevs(dList,maxT)
+        VizRS.vizDevs(dList,maxT)
         return (dList,maxT)
 
     def zeroAndKill():
@@ -246,26 +249,26 @@ class FSMBased:
         - Returns the maximum deviation from the nominal behavior
         - N consecutive misses allowed
         '''
-        C=[0]*3
-        V=np.zeros((3,3))
+        C=[0]*4
+        V=np.zeros((4,4))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,10),(10,10)]
-        P=P+[(0,0)]*1
+        P=P+[(0,0)]*2
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
-        MAX_DEADLINE=3
+        MAX_DEADLINE=1
         methodName="ZeroKill"
-        p=Benchmarks.DC.A.shape[0]
+        p=Benchmarks.ECRTS21.A.shape[0]
 
         print(">> REPORT.\tMethod: Recurrence Relation.\tPolicy: ",methodName,".\tMax Deadline Miss: ",MAX_DEADLINE)
         time_taken=time.time()
 
-        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetZeroKill(initialSet,nominalSeqn)
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetZeroKill(initialSet,nominalSeqn)
 
         # Get the matrices
-        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,MAX_DEADLINE,methodName)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,MAX_DEADLINE,methodName)
         matList=ulsGen.getAllPossibleMatrices()
 
         hList=[matList[0]]*(MAX_DEADLINE+1)
@@ -279,7 +282,7 @@ class FSMBased:
         print("\tMax Deviation: ",dList[maxT],";\t At time step: ",maxT)
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
-        #VizRS.vizDevs(dList,maxT)
+        VizRS.vizDevs(dList,maxT)
         return (dList,maxT)
 
     def holdAndSkip():
@@ -288,34 +291,34 @@ class FSMBased:
         - Returns the maximum deviation from the nominal behavior
         - N consecutive misses allowed
         '''
-        C_nom=[0]*3
-        V_nom=np.zeros((3,3))
+        C_nom=[0]*4
+        V_nom=np.zeros((4,4))
         V_nom[0][0]=1.0
         V_nom[1][1]=1.0
         P_nom=[(10,10),(10,10)]
-        P_nom=P_nom+[(0,0)]*1
+        P_nom=P_nom+[(0,0)]*2
         initialSet_nom=(C_nom,V_nom,P_nom)
 
-        C=[0]*9
-        V=np.zeros((9,9))
+        C=[0]*6
+        V=np.zeros((6,6))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,10),(10,10)]
-        P=P+[(0,0)]*7
+        P=P+[(0,0)]*4
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
-        MAX_DEADLINE=3
+        MAX_DEADLINE=1
         methodName="HoldSkip"
-        p=Benchmarks.DC.A.shape[0]
+        p=Benchmarks.ECRTS21.A.shape[0]
 
         print(">> REPORT.\tMethod: Recurrence Relation.\tPolicy: ",methodName,".\tMax Deadline Miss: ",MAX_DEADLINE)
         time_taken=time.time()
 
-        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldSkip(initialSet_nom,nominalSeqn)
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetHoldSkip(initialSet_nom,nominalSeqn)
 
         # Get the matrices
-        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,MAX_DEADLINE,methodName)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,MAX_DEADLINE,methodName)
         matList=ulsGen.getAllPossibleMatrices()
 
         hList=copy.copy(matList[1:])
@@ -329,35 +332,35 @@ class FSMBased:
         print("\tMax Deviation: ",dList[maxT],";\t At time step: ",maxT)
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
-        #VizRS.vizDevs(dList,maxT)
+        VizRS.vizDevs(dList,maxT)
         return (dList,maxT)
 
-    def holdAndSkipAny(MAX_DEADLINE=3):
+    def holdAndSkipAny(MAX_DEADLINE=1):
         '''
         - Applies Hold&SkipAny scheduling policy
         - Returns the maximum deviation from the nominal behavior
         - N consecutive misses allowed
         '''
 
-        C=[0]*5
-        V=np.zeros((5,5))
+        C=[0]*6
+        V=np.zeros((6,6))
         V[0][0]=1.0
         V[1][1]=1.0
         P=[(10,10),(10,10)]
-        P=P+[(0,0)]*3
+        P=P+[(0,0)]*4
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
         methodName="HoldSkipAny"
-        p=Benchmarks.DC.A.shape[0]
+        p=Benchmarks.ECRTS21.A.shape[0]
 
         print(">> REPORT.\tMethod: Recurrence Relation.\tPolicy: ",methodName,".\tMax Deadline Miss: ",MAX_DEADLINE)
         time_taken=time.time()
 
-        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldSkipAny(initialSet,nominalSeqn)
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetHoldSkipAny(initialSet,nominalSeqn)
 
         # Get the matrices
-        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,MAX_DEADLINE,methodName)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,MAX_DEADLINE,methodName)
         matList=ulsGen.getAllPossibleMatrices()
 
         hList=[matList[0]]+[matList[1]]*MAX_DEADLINE
@@ -371,7 +374,7 @@ class FSMBased:
         print("\tMax Deviation: ",dList[maxT],";\t At time step: ",maxT)
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
-        #VizRS.vizDevs(dList,maxT)
+        VizRS.vizDevs(dList,maxT)
         return (dList,maxT)
 
     def allPolicies():
@@ -412,14 +415,10 @@ class FSMBased:
 
 
 
-
-
-
 if False:
     ULSBased.allPolicies()
 
-if False:
-    FSMBased.allPolicies()
+
 
 if False:
-    FSMBased.compHoldSkipAny()
+    FSMBased.holdAndSkipAny()

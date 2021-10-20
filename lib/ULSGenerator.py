@@ -132,7 +132,7 @@ class ULSGen:
 
         arrZ1=np.zeros((r,r))
         arrZ2=np.zeros((r,p))
-        arrI=np.zeros((r,r))
+        arrI=np.identity(r)
 
         K_x = -self.K[:,0:p]
 
