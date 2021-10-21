@@ -296,6 +296,8 @@ class VizRS:
         T=len(devLists[0])
         X=list(range(T))
         plt.figure()
+        plt.xlabel("Time")
+        plt.ylabel("Deviation")
 
         for (lb,devList,maxT) in zip(labels,devLists,maxTLists):
             plt.plot(X,devList,label=lb)

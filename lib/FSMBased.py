@@ -194,6 +194,7 @@ class RecRel:
                     d_tk=SetOp.getDistance(self.nominalReachSet[t],stateList[k][t],p)
                     if d_tk>d_t:
                         d_t=d_tk
+
             if d_t>maxD:
                 maxD=d_t
                 maxT=t

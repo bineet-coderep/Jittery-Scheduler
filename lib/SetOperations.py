@@ -133,7 +133,7 @@ class SetOp:
         U=np.zeros((n,1),dtype=object)
 
         for i in range(n):
-            U[i][0]=(9999999999999,-9999999999999)
+            U[i][0]=(np.inf,-np.inf)
 
         for rs in rsList:
             P=rs[2]
@@ -167,7 +167,8 @@ class SetOp:
 
         return box
 
-    def getDistance(st1,st2,p):
+
+    def getDistance2(st1,st2,p):
         '''
         Compute the distance between st1 and st2
         '''
@@ -184,18 +185,68 @@ class SetOp:
         for element in itertools.product(*boxSt2):
             coordSt2.append(element)
 
-        d=-9
+        d=-np.inf
 
-        for X1 in coordSt1:
+        print(coordSt1)
+
+        '''for X1 in coordSt1:
+            d_t=np.inf
             for X2 in coordSt2:
                 t1=0
                 for (x1,x2) in zip(X1,X2):
                     t1+=(x1-x2)**2
-                d_t=math.sqrt(t1)
-                if d_t>d:
-                    d=d_t
+                d_l2=math.sqrt(t1)
+                if d_l2<d_t:
+                    d_t=d_l2
+            if d_t>d:
+                d=d_t'''
+
+        '''for X1 in coordSt2:
+            d_t=np.inf
+            for X2 in coordSt1:
+                t1=0
+                for (x1,x2) in zip(X1,X2):
+                    t1+=(x1-x2)**2
+                d_l2=math.sqrt(t1)
+                if d_l2<d_t:
+                    d_t=d_l2
+            if d_t>d:
+                d=d_t
+        '''
 
         return d
+
+    def getDistance(st1,st2,p):
+        '''
+        Compute the distance between st1 and st2
+        '''
+        boxSt1=SetOp.boxHull([st1])[2][:p]
+        boxSt2=SetOp.boxHull([st2])[2][:p]
+
+        # Compute coordinates of boxSt1
+        pt=[]
+        for element in itertools.product(*boxSt1):
+            pt.append(element)
+
+        # Compute coordinates of boxSt2
+        coordSt2=[]
+        for element in itertools.product(*boxSt2):
+            coordSt2.append(element)
+
+
+        d=-np.inf
+        for X1 in coordSt2:
+            t1=0
+            for (x1,x2) in zip(X1,pt[0]):
+                t1+=(x1-x2)**2
+            d_l2=math.sqrt(t1)
+            if d_l2>d:
+                d=d_l2
+
+
+
+        return d
+
 
 
 
