@@ -410,7 +410,17 @@ class FSMBased:
 
 
 
+def getRandInitSets():
+    K=4
+    PList=[]
+    for i in range(K):
+        x=random.randint(-10,10)
+        y=random.randint(-10,10)
+        P=[(x,x),(y,y)]
+        PList.append(P)
+    print(PList)
 
+PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
 
 
 
