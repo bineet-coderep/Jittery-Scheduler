@@ -18,39 +18,52 @@
 ```sh
 >> REPORT.	Method: ULS.	Policy:  HoldKill .
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  7.463354587554932
+	Time Taken:  9.286415338516235
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  3.5951576232910156
+	Time Taken:  4.294870138168335
 >> STATUS: Deviations Computed!
 	Max Deviation:  3.875431136410593e+22 ;	 At time step:  150
-	Total Time Taken:  11.081182479858398
+	Total Time Taken:  13.608521699905396
 >> End of Report!
 
 -----------
 
 >> REPORT.	Method: ULS.	Policy:  ZeroKill .
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  7.013054370880127
+	Time Taken:  8.350624799728394
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  3.6099441051483154
+	Time Taken:  4.06915807723999
 >> STATUS: Deviations Computed!
 	Max Deviation:  167625734.65586782 ;	 At time step:  150
-	Total Time Taken:  10.624862670898438
+	Total Time Taken:  12.42193078994751
 >> End of Report!
 
 -----------
 
 >> REPORT.	Method: ULS.	Policy:  HoldSkipAny .
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  26.614306211471558
+	Time Taken:  31.055190563201904
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  8.100639581680298
+	Time Taken:  10.038575410842896
+>> STATUS: Deviations Computed!
+	Max Deviation:  4.247347343653142e+47 ;	 At time step:  150
+	Total Time Taken:  41.09636163711548
+>> End of Report!
+
+-----------
+
+>> REPORT.	Method: ULS.	Policy:  ZeroSkipNext .
+>> STATUS: Computing Reachable Sets . . .
+	Time Taken:  33.09131479263306
+>> STATUS: Reachable Sets Computed!
+>> STATUS: Computing Deviations . . .
+	Time Taken:  10.650840282440186
 >> STATUS: Deviations Computed!
 	Max Deviation:  5.823056092780334e+61 ;	 At time step:  150
-	Total Time Taken:  34.7172417640686
+	Total Time Taken:  43.745068311691284
 >> End of Report!
 
 -----------
@@ -68,39 +81,52 @@
 ```sh
 >> REPORT.	Method: Recurrence Relation.	Policy:  HoldKill .	Max Deadline Miss:  1
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.16168975830078125
+	Time Taken:  0.20417547225952148
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  0.2966632843017578
+	Time Taken:  0.3987703323364258
 >> STATUS: Deviations Computed!
 	Max Deviation:  3.1261950018276934e+17 ;	 At time step:  150
-	Total Time Taken:  0.4828829765319824
+	Total Time Taken:  0.6261465549468994
 >> End of Report!
 
 -----------
 
 >> REPORT.	Method: Recurrence Relation.	Policy:  ZeroKill .	Max Deadline Miss:  1
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.16863393783569336
+	Time Taken:  0.21126461029052734
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  0.2822549343109131
+	Time Taken:  0.3571434020996094
 >> STATUS: Deviations Computed!
 	Max Deviation:  5.08905854381013e+17 ;	 At time step:  150
-	Total Time Taken:  0.45247530937194824
+	Total Time Taken:  0.5703480243682861
 >> End of Report!
 
 -----------
 
 >> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  1
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.2671947479248047
+	Time Taken:  0.3312113285064697
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  0.4993150234222412
+	Time Taken:  0.6258902549743652
 >> STATUS: Deviations Computed!
 	Max Deviation:  3.6197517195779014e+17 ;	 At time step:  150
-	Total Time Taken:  0.7682950496673584
+	Total Time Taken:  0.9592220783233643
+>> End of Report!
+
+-----------
+
+>> REPORT.	Method: Recurrence Relation.	Policy:  ZeroSkipNext .	Max Deadline Miss:  1
+>> STATUS: Computing Reachable Sets . . .
+	Time Taken:  0.32918500900268555
+>> STATUS: Reachable Sets Computed!
+>> STATUS: Computing Deviations . . .
+	Time Taken:  0.615321159362793
+>> STATUS: Deviations Computed!
+	Max Deviation:  5.488563469540778e+17 ;	 At time step:  150
+	Total Time Taken:  0.9466495513916016
 >> End of Report!
 
 -----------
@@ -117,52 +143,52 @@
 ```sh
 >> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  2
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.3958289623260498
+	Time Taken:  0.4832725524902344
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  0.7790718078613281
+	Time Taken:  0.9236049652099609
 >> STATUS: Deviations Computed!
 	Max Deviation:  5.604461570947084e+17 ;	 At time step:  150
-	Total Time Taken:  1.1970632076263428
->> End of Report!
-
------------
-
->> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  3
->> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.5468177795410156
->> STATUS: Reachable Sets Computed!
->> STATUS: Computing Deviations . . .
-	Time Taken:  1.0431251525878906
->> STATUS: Deviations Computed!
-	Max Deviation:  6.955645234547644e+17 ;	 At time step:  150
-	Total Time Taken:  1.5917682647705078
+	Total Time Taken:  1.4290974140167236
 >> End of Report!
 
 -----------
 
 >> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  4
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.6767368316650391
+	Time Taken:  0.7964930534362793
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  1.3118624687194824
+	Time Taken:  1.6031839847564697
 >> STATUS: Deviations Computed!
 	Max Deviation:  7.926570499514811e+17 ;	 At time step:  150
-	Total Time Taken:  1.9903881549835205
+	Total Time Taken:  2.4017937183380127
 >> End of Report!
 
 -----------
 
->> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  5
+>> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  8
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.8063147068023682
+	Time Taken:  1.4722073078155518
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  1.5958516597747803
+	Time Taken:  2.8343803882598877
 >> STATUS: Deviations Computed!
-	Max Deviation:  8.446945480518207e+17 ;	 At time step:  150
-	Total Time Taken:  2.403914451599121
+	Max Deviation:  8.628221018728603e+17 ;	 At time step:  150
+	Total Time Taken:  4.308793067932129
+>> End of Report!
+
+-----------
+
+>> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  16
+>> STATUS: Computing Reachable Sets . . .
+	Time Taken:  2.6516480445861816
+>> STATUS: Reachable Sets Computed!
+>> STATUS: Computing Deviations . . .
+	Time Taken:  5.432049751281738
+>> STATUS: Deviations Computed!
+	Max Deviation:  8.628221018728603e+17 ;	 At time step:  150
+	Total Time Taken:  8.086709022521973
 >> End of Report!
 
 -----------
@@ -182,57 +208,57 @@
 ```sh
 >> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  1
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.321455717086792
+	Time Taken:  0.31138038635253906
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  0.6102266311645508
+	Time Taken:  0.5974938869476318
 >> STATUS: Deviations Computed!
-	Max Deviation:  2.894864698778919e+17 ;	 At time step:  150
-	Total Time Taken:  0.9539368152618408
+	Max Deviation:  2.533424770754503e+17 ;	 At time step:  150
+	Total Time Taken:  0.9317572116851807
 >> End of Report!
-Init Set:  8 , 1
+Init Set:  -7 , -4
 
 -----------
 
 >> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  1
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.3075523376464844
+	Time Taken:  0.33505773544311523
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  0.5742754936218262
+	Time Taken:  0.6161625385284424
 >> STATUS: Deviations Computed!
-	Max Deviation:  3.619843375831907e+16 ;	 At time step:  150
-	Total Time Taken:  0.883885383605957
+	Max Deviation:  2.1722883685587453e+17 ;	 At time step:  150
+	Total Time Taken:  0.9536399841308594
 >> End of Report!
-Init Set:  -1 , 1
+Init Set:  -6 , -8
 
 -----------
 
 >> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  1
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.3084239959716797
+	Time Taken:  0.32759761810302734
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  0.649634838104248
+	Time Taken:  0.6231324672698975
 >> STATUS: Deviations Computed!
-	Max Deviation:  3.2560370048366496e+17 ;	 At time step:  150
-	Total Time Taken:  0.9600763320922852
+	Max Deviation:  3.25777654762012e+17 ;	 At time step:  150
+	Total Time Taken:  0.9529314041137695
 >> End of Report!
-Init Set:  9 , -4
+Init Set:  9 , 9
 
 -----------
 
 >> REPORT.	Method: Recurrence Relation.	Policy:  HoldSkipAny .	Max Deadline Miss:  1
 >> STATUS: Computing Reachable Sets . . .
-	Time Taken:  0.3292818069458008
+	Time Taken:  0.3278496265411377
 >> STATUS: Reachable Sets Computed!
 >> STATUS: Computing Deviations . . .
-	Time Taken:  0.5834314823150635
+	Time Taken:  0.639307975769043
 >> STATUS: Deviations Computed!
-	Max Deviation:  7.257648674531594e+16 ;	 At time step:  150
-	Total Time Taken:  0.9151253700256348
+	Max Deviation:  1.8089391829055462e+17 ;	 At time step:  150
+	Total Time Taken:  0.9693782329559326
 >> End of Report!
-Init Set:  2 , 7
+Init Set:  -5 , 2
 
 -----------
 ```

@@ -20,84 +20,6 @@ class ULSGen:
         self.methodName=methodName # Scheduling policy
 
 
-    def holdAndSkipOld(self):
-        '''
-        Returns all possible matrices possible
-
-        This code has been taken from the Matlab implementation,
-        `hold_and_skip_next.m`, by Clara Hobbs (also provided in this repository).
-        '''
-
-        p=self.A.shape[0]
-        r=self.B.shape[1]
-
-        array_seqn=[]
-
-
-        # Miss matrix
-        A_miss=np.vstack(
-        (np.hstack((self.A,np.zeros((p,self.n*p)),self.B)),
-        np.hstack((np.identity(self.n*p),np.zeros((self.n*p,p+r)))),
-        np.hstack((np.zeros((r,(self.n+1)*p)),np.identity(r))))
-        )
-        array_seqn.append(copy.copy(A_miss))
-
-        # Hit matrix
-        K_x = -self.K[:,0:p]
-        if self.K.shape[1] == p + r:
-            K_u = -self.K[:,p:p+r+1]
-        else:
-            K_u = np.zeros((p, r))
-
-        A_hit=np.zeros(((self.n+1)*p + r, (self.n+1)*p + r, self.n+1))
-        for i in range(self.n):
-            A_hit[:,:,i]=np.vstack(
-            (np.hstack((self.A,np.zeros((p,self.n*p)),self.B)),
-            np.hstack((np.identity(self.n*p),np.zeros((self.n*p,p+r)))),
-            np.hstack((np.zeros((r,i*p)),K_x,np.zeros((r,(self.n-i)*p)),K_u)))
-            )
-            array_seqn.append(A_hit[:,:,i])
-
-        return array_seqn
-
-    def holdAndSkip(self):
-        '''
-        Returns all possible matrices possible
-
-        This code has been taken from the Matlab implementation,
-        `hold_and_skip_next.m`, by Clara Hobbs (also provided in this repository).
-        '''
-
-        p=self.A.shape[0]
-        r=self.B.shape[1]
-
-        array_seqn=[]
-
-
-        # Miss matrix
-        A_miss=np.vstack(
-        (np.hstack((self.A,np.zeros((p,self.n*p)),self.B)),
-        np.hstack((np.identity(self.n*p),np.zeros((self.n*p,p+r)))),
-        np.hstack((np.zeros((r,(self.n+1)*p)),np.identity(r))))
-        )
-        array_seqn.append(copy.copy(A_miss))
-
-        # Hit matrix
-        K_x = -self.K[:,0:p]
-
-        K_u = np.zeros((r, r))
-
-        A_hit=np.zeros(((self.n+1)*p + r, (self.n+1)*p + r, self.n+1))
-        for i in range(self.n+1):
-            A_hit[:,:,i]=np.vstack(
-            (np.hstack((self.A,np.zeros((p,self.n*p)),self.B)),
-            np.hstack((np.identity(self.n*p),np.zeros((self.n*p,p+r)))),
-            np.hstack((np.zeros((r,i*p)),K_x,np.zeros((r,(self.n-i)*p)),K_u)))
-            )
-            array_seqn.append(A_hit[:,:,i])
-
-        return array_seqn
-
     def zeroAndKill(self):
         '''
         Returns all possible matrices as per the zero and kill strategy
@@ -112,8 +34,15 @@ class ULSGen:
 
         K_x = -self.K[:,0:p]
 
+        K_x = -self.K[:,0:p]
+        # Split apart the two pieces of K, if necessary
+        if self.K.shape[1] == p + r:
+            K_u = -self.K[:,p:p+r+1]
+        else:
+            K_u = np.zeros((r, r))
 
-        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,arrZ1))))
+
+        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,K_u))))
 
         A_miss=np.vstack((np.hstack((self.A,self.B)),np.hstack((arrZ2,arrZ1))))
 
@@ -134,10 +63,16 @@ class ULSGen:
         arrZ2=np.zeros((r,p))
         arrI=np.identity(r)
 
+
         K_x = -self.K[:,0:p]
+        # Split apart the two pieces of K, if necessary
+        if self.K.shape[1] == p + r:
+            K_u = -self.K[:,p:p+r+1]
+        else:
+            K_u = np.zeros((r, r))
 
 
-        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,arrZ1))))
+        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,K_u))))
 
         A_miss=np.vstack((np.hstack((self.A,self.B)),np.hstack((arrZ2,arrI))))
 
@@ -182,6 +117,43 @@ class ULSGen:
 
         return [A_HH, A_MH, A_HM, A_MM]
 
+    def zeroAndSkipNext(self):
+        """
+        Returns all matrices for a second formulation of Hold&Skip-Next
+
+        This formulation allows any arbitrarily-large number of consecutive
+        deadline misses with a constant-sized augmented state space.  This
+        makes computation faster (since the A matrices are smaller), but the
+        results looser (since the overapproximation gets even worse).
+        """
+        p, r = self.B.shape
+
+        # Split apart the two pieces of K, if necessary
+        K_x = -self.K[:,0:p]
+        if self.K.shape[1] == p + r:
+            K_u = -self.K[:,p:p+r+1]
+        else:
+            K_u = np.zeros((r, r))
+
+        # Hit following hit
+        A_HH = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, 2*p + r))],
+                         [K_x, np.zeros((r, p)), K_u]])
+        # Hit following miss
+        A_MH = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, 2*p + r))],
+                         [np.zeros((r, p)), K_x, K_u]])
+        # Miss following hit
+        A_HM = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.eye(p), np.zeros((p, p + r))],
+                         [np.zeros((r, 2*p)), np.zeros((r,r))]])
+        # Miss following miss
+        A_MM = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, p)), np.eye(p), np.zeros((p, r))],
+                         [np.zeros((r, 2*p)), np.eye(r)]])
+
+        return [A_HH, A_MH, A_HM, A_MM]
+
     def getAllPossibleMatrices(self):
         '''
         Returns all possible matrices possible
@@ -197,6 +169,8 @@ class ULSGen:
             array_seqn=self.holdAndKill()
         elif self.methodName=="HoldSkipAny":
             array_seqn=self.holdAndSkipAny()
+        elif self.methodName=="ZeroSkipNext":
+            array_seqn=self.zeroAndSkipNext()
         else:
             print("Not Implemented!")
             exit(0)

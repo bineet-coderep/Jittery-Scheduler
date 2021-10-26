@@ -153,6 +153,60 @@ class BoundedTree:
 
         return rsList
 
+    def reachSetZeroSkipNext(self,initSet,seqn):
+        p, r = self.B.shape
+
+        # Split apart the two pieces of K, if necessary
+        K_x = -self.K[:,0:p]
+        if self.K.shape[1] == p + r:
+            K_u = -self.K[:,p:p+r+1]
+        else:
+            K_u = np.zeros((r, r))
+
+        # Hit following hit
+        A_HH = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, 2*p + r))],
+                         [K_x, np.zeros((r, p)), K_u]])
+        # Hit following miss
+        A_MH = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, 2*p + r))],
+                         [np.zeros((r, p)), K_x, K_u]])
+        # Miss following hit
+        A_HM = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.eye(p), np.zeros((p, p + r))],
+                         [np.zeros((r, 2*p)), np.zeros((r,r))]])
+        # Miss following miss
+        A_MM = np.block([[self.A, np.zeros((p, p)), self.B],
+                         [np.zeros((p, p)), np.eye(p), np.zeros((p, r))],
+                         [np.zeros((r, 2*p)), np.eye(r)]])
+
+        rsList=[]
+
+        rsList.append(copy.copy(initSet))
+
+        t_max=len(seqn)
+
+        rs=StarOp.prodMatStar(A_HH,initSet)
+        rsList.append(copy.copy(rs))
+
+        for t in range(1,t_max):
+            if seqn[t-1]==1 and seqn[t]==1:
+                # Hit-Hit
+                A = A_HH
+            elif seqn[t-1]==1 and seqn[t]==0:
+                # Hit-Miss
+                A = A_HM
+            elif seqn[t-1]==0 and seqn[t]==1:
+                # Miss-Hit
+                A = A_MH
+            elif seqn[t-1]==0 and seqn[t]==0:
+                # Miss-Hit
+                A = A_MM
+            rs=StarOp.prodMatStar(A,rs)
+            rsList.append(copy.copy(rs))
+
+        return rsList
+
     def reachSetHoldKill(self,initSet,seqn):
         rs=copy.copy(initSet)
         p=self.A.shape[0]
@@ -162,8 +216,15 @@ class BoundedTree:
         arrZ2=np.zeros((r,p))
         arrI=np.identity(r)
 
+        # Split apart the two pieces of K, if necessary
         K_x = -self.K[:,0:p]
-        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,arrZ1))))
+        if self.K.shape[1] == p + r:
+            K_u = -self.K[:,p:p+r+1]
+        else:
+            K_u = np.zeros((r, r))
+
+
+        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,K_u))))
         A_miss=np.vstack((np.hstack((self.A,self.B)),np.hstack((arrZ2,arrI))))
 
         t_max = len(seqn)
@@ -198,7 +259,12 @@ class BoundedTree:
         t_max = len(seqn)
 
         K_x = -self.K[:,0:p]
-        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,arrZ1))))
+        # Split apart the two pieces of K, if necessary
+        if self.K.shape[1] == p + r:
+            K_u = -self.K[:,p:p+r+1]
+        else:
+            K_u = np.zeros((r, r))
+        A_hit=np.vstack((np.hstack((self.A,self.B)),np.hstack((K_x,K_u))))
         A_miss=np.vstack((np.hstack((self.A,self.B)),np.hstack((arrZ2,arrZ1))))
 
         rsList=[]

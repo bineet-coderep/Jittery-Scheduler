@@ -95,12 +95,12 @@ class ULSBased:
         - Returns the maximum deviation from the nominal behavior
         - 3 consecutive misses allowed
         '''
-        C_nom=[0]*5
-        V_nom=np.zeros((5,5))
+        C_nom=[0]*3
+        V_nom=np.zeros((3,3))
         V_nom[0][0]=1.0
         V_nom[1][1]=1.0
         P_nom=P
-        P_nom=P_nom+[(0,0)]*3
+        P_nom=P_nom+[(0,0)]*1
         initialSet_nom=(C_nom,V_nom,P_nom)
 
         C=[0]*9
@@ -145,12 +145,49 @@ class ULSBased:
         V=np.zeros((6,6))
         V[0][0]=1.0
         V[1][1]=1.0
-        P=P+[(0,0)]*6
+        P=P+[(0,0)]*5
         initialSet=(C,V,P)
         T=150
         nominalSeqn=[1]*T
         MAX_DEADLINE=-1 # Any
         methodName="HoldSkipAny"
+        p=Benchmarks.Steering.A.shape[0]
+
+        print(">> REPORT.\tMethod: ULS.\tPolicy: ",methodName,".")
+        time_taken=time.time()
+
+        nominalReachSet=BoundedTree(Benchmarks.Steering.A,Benchmarks.Steering.B,Benchmarks.Steering.C,Benchmarks.Steering.D,Benchmarks.Steering.K).reachSetHoldSkipAny(initialSet,nominalSeqn)
+
+        ulsGen=ULSGen(Benchmarks.Steering.A,Benchmarks.Steering.B,Benchmarks.Steering.C,Benchmarks.Steering.D,Benchmarks.Steering.K,MAX_DEADLINE,methodName)
+        uncertainMat=ulsGen.getUncertainMatrix()
+
+        deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
+        (reachORS,dList,maxT)=deviation.getDeviations(p)
+
+        print("\tMax Deviation: ",dList[maxT],";\t At time step: ",maxT)
+        print("\tTotal Time Taken: ",time.time()-time_taken)
+        print(">> End of Report!")
+        #VizRS.vizDevs(dList,maxT)
+
+        return (dList,maxT)
+
+    def zeroAndSkipNext(P=[(10,10),(10,10)],T=150):
+        '''
+        - Applies Hold&Skip scheduling policy
+        - Returns the maximum deviation from the nominal behavior
+        - All possible sequences of hit/miss
+        '''
+
+        C=[0]*6
+        V=np.zeros((6,6))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=P+[(0,0)]*6
+        initialSet=(C,V,P)
+        T=150
+        nominalSeqn=[1]*T
+        MAX_DEADLINE=-1 # Any
+        methodName="ZeroSkipNext"
         p=Benchmarks.Steering.A.shape[0]
 
         print(">> REPORT.\tMethod: ULS.\tPolicy: ",methodName,".")
@@ -183,10 +220,12 @@ class ULSBased:
         #print("\n-----------\n")
         (dList_HSA,maxT_HSA)=ULSBased.holdAndSkipAny(P,T) # Any number of miss
         print("\n-----------\n")
+        (dList_ZSN,maxT_ZSN)=ULSBased.zeroAndSkipNext(P,T) # Any number of miss
+        print("\n-----------\n")
 
-        labels=["HoldKill","ZeroKill","HoldSkip","HoldSkipNext"]
-        allDevLists=[dList_HK,dList_ZK,dList_HSA]
-        maxTLists=[maxT_HK,maxT_ZK,maxT_HSA]
+        labels=["HoldKill","ZeroKill","HoldSkipNext","ZeroSkipNext"]
+        allDevLists=[dList_HK,dList_ZK,dList_HSA,dList_ZSN]
+        maxTLists=[maxT_HK,maxT_ZK,maxT_HSA,maxT_ZSN]
 
         VizRS.vizAllDevs(labels,allDevLists,maxTLists,"steering_uls")
 
@@ -358,6 +397,46 @@ class FSMBased:
         #VizRS.vizDevs(dList,maxT)
         return (dList,maxT)
 
+    def zeroAndSkipNext(P=[(10,10),(10,10)],MAX_DEADLINE=3,T=150):
+        '''
+        - Applies Hold&SkipAny scheduling policy
+        - Returns the maximum deviation from the nominal behavior
+        - N consecutive misses allowed
+        '''
+
+        C=[0]*6
+        V=np.zeros((6,6))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=P+[(0,0)]*4
+        initialSet=(C,V,P)
+        nominalSeqn=[1]*T
+        methodName="ZeroSkipNext"
+        p=Benchmarks.Steering.A.shape[0]
+
+        print(">> REPORT.\tMethod: Recurrence Relation.\tPolicy: ",methodName,".\tMax Deadline Miss: ",MAX_DEADLINE)
+        time_taken=time.time()
+
+        nominalReachSet=BoundedTree(Benchmarks.Steering.A,Benchmarks.Steering.B,Benchmarks.Steering.C,Benchmarks.Steering.D,Benchmarks.Steering.K).reachSetZeroSkipNext(initialSet,nominalSeqn)
+
+        # Get the matrices
+        ulsGen=ULSGen(Benchmarks.Steering.A,Benchmarks.Steering.B,Benchmarks.Steering.C,Benchmarks.Steering.D,Benchmarks.Steering.K,MAX_DEADLINE,methodName)
+        matList=ulsGen.getAllPossibleMatrices()
+
+        hList=[matList[0]]+[matList[1]]*MAX_DEADLINE
+        mList=[matList[2]]+[matList[3]]*MAX_DEADLINE
+
+        automaton=(MAX_DEADLINE,hList,mList)
+
+        rec=RecRel(automaton,initialSet,T,nominalReachSet)
+        stateList,dList,maxT=rec.getDeviations(p)
+
+        print("\tMax Deviation: ",dList[maxT],";\t At time step: ",maxT)
+        print("\tTotal Time Taken: ",time.time()-time_taken)
+        print(">> End of Report!")
+        #VizRS.vizDevs(dList,maxT)
+        return (dList,maxT)
+
     def allPolicies(P=[(10,10),(10,10)],MAX_DEADLINE=3,T=150):
         '''
         Initial Set: [[10,10],[10,10]]
@@ -370,10 +449,12 @@ class FSMBased:
         #print("\n-----------\n")
         (dList_HSA,maxT_HSA)=FSMBased.holdAndSkipAny(P,MAX_DEADLINE,T)
         print("\n-----------\n")
+        (dList_ZSN,maxT_ZSN)=FSMBased.zeroAndSkipNext(P,MAX_DEADLINE,T)
+        print("\n-----------\n")
 
-        labels=["HoldKill("+str(MAX_DEADLINE)+")","ZeroKill("+str(MAX_DEADLINE)+")","HoldSkip("+str(MAX_DEADLINE)+")","HoldSkipNext("+str(MAX_DEADLINE)+")"]
-        allDevLists=[dList_HK,dList_ZK,dList_HSA]
-        maxTLists=[maxT_HK,maxT_ZK,maxT_HSA]
+        labels=["HoldKill("+str(MAX_DEADLINE)+")","ZeroKill("+str(MAX_DEADLINE)+")","HoldSkipNext("+str(MAX_DEADLINE)+")","ZeroSkipNext("+str(MAX_DEADLINE)+")"]
+        allDevLists=[dList_HK,dList_ZK,dList_HSA,dList_ZSN]
+        maxTLists=[maxT_HK,maxT_ZK,maxT_HSA,maxT_ZSN]
 
         VizRS.vizAllDevs(labels,allDevLists,maxTLists,"steering_fsm")
 
@@ -410,7 +491,7 @@ class FSMBased:
 
 
 
-
+PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
 
 
 
@@ -428,17 +509,18 @@ if False:
 if False:
     P=[(10,10),(10,10)]
     T=150
-    deadlines=[2,3,4,5]
+    deadlines=[2,4,8,16]
     FSMBased.compHoldSkipAny(P,deadlines,T)
 
-if True:
+if False:
     PList=[]
     K=4
-    for i in range(K):
+    '''for i in range(K):
         x=random.randint(-10,10)
         y=random.randint(-10,10)
         P=[(x,x),(y,y)]
-        PList.append(P)
+        PList.append(P)'''
+    PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
     T=150
     max_deadline=1
     FSMBased.compHoldSkipAnyInitSet(PList,max_deadline,T)
