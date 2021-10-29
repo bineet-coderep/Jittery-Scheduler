@@ -322,7 +322,7 @@ class VizRS:
         plt.legend(fontsize='x-large')
         #plt.savefig(OUTPUT_PATH+'/'+fname+'.png')
         #fig, ax = plt.subplots()
-        plt.savefig(OUTPUT_PATH+'/'+fname+'.eps', format='eps')
+        plt.savefig(OUTPUT_PATH+'/'+fname+'.png', format='png')
 
 
         time_taken=time.time()-time_taken
@@ -355,7 +355,7 @@ class VizRS:
 
 
         plt.legend(fontsize='x-large')
-        plt.savefig(OUTPUT_PATH+'/'+fname+'_all_devs.eps', format='eps')
+        plt.savefig(OUTPUT_PATH+'/'+fname+'_all_devs.svg', format='svg')
         #plt.savefig(OUTPUT_PATH+'/'+fname+"_all_devs")
 
 
@@ -483,7 +483,7 @@ class VizRS:
         plt.legend(fontsize='large')
 
 
-        plt.savefig(OUTPUT_PATH+'/'+fname+'.eps', format='eps')
+        plt.savefig(OUTPUT_PATH+'/'+fname+'.png', format='png')
 
         time_taken=time.time()-time_taken
         print("\tTime Taken: ",time_taken)
