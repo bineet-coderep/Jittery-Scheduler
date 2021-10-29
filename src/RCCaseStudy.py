@@ -452,7 +452,7 @@ class FSMBased:
         (dList_ZSN,maxT_ZSN)=FSMBased.zeroAndSkipNext(P,MAX_DEADLINE,T)
         print("\n-----------\n")
 
-        labels=["HoldKill("+str(MAX_DEADLINE)+")","ZeroKill("+str(MAX_DEADLINE)+")","HoldSkipNext("+str(MAX_DEADLINE)+")","ZeroSkipNext("+str(MAX_DEADLINE)+")"]
+        labels=["Hold&Kill("+str(MAX_DEADLINE)+")","Zero&Kill("+str(MAX_DEADLINE)+")","Hold&Skip-Next("+str(MAX_DEADLINE)+")","Zero&Skip-Next("+str(MAX_DEADLINE)+")"]
         allDevLists=[dList_HK,dList_ZK,dList_HSA,dList_ZSN]
         maxTLists=[maxT_HK,maxT_ZK,maxT_HSA,maxT_ZSN]
 
@@ -467,7 +467,7 @@ class FSMBased:
 
             (dList_HSA,maxT_HSA)=FSMBased.holdAndSkipAny(P,m,T)
             print("\n-----------\n")
-            labels.append("HoldSkipNext("+str(m)+")")
+            labels.append("Hold&Skip-Next("+str(m)+")")
             allDevLists.append(dList_HSA)
             maxTLists.append(maxT_HSA)
 
@@ -483,7 +483,7 @@ class FSMBased:
             (dList_HSA,maxT_HSA)=FSMBased.holdAndSkipAny(P,MAX_DEADLINE,T)
             print("Init Set: ",P[0][0],",",P[1][0])
             print("\n-----------\n")
-            labels.append("HoldSkipNext ("+str(P[0][0])+","+str(P[1][0])+")")
+            labels.append("Hold&Skip-Next ("+str(P[0][0])+","+str(P[1][0])+")")
             allDevLists.append(dList_HSA)
             maxTLists.append(maxT_HSA)
 
