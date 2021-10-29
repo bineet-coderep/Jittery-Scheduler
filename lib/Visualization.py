@@ -320,7 +320,9 @@ class VizRS:
         plt.plot(nomTrajX,nomTrajY,markersize=20,linewidth=3,label="Nominal Trajectory",color='k')
 
         plt.legend(fontsize='x-large')
-        plt.savefig(OUTPUT_PATH+'/'+fname+'.png')
+        #plt.savefig(OUTPUT_PATH+'/'+fname+'.png')
+        #fig, ax = plt.subplots()
+        plt.savefig(OUTPUT_PATH+'/'+fname+'.eps', format='eps')
 
 
         time_taken=time.time()-time_taken
@@ -353,7 +355,8 @@ class VizRS:
 
 
         plt.legend(fontsize='x-large')
-        plt.savefig(OUTPUT_PATH+'/'+fname+"_all_devs")
+        plt.savefig(OUTPUT_PATH+'/'+fname+'_all_devs.eps', format='eps')
+        #plt.savefig(OUTPUT_PATH+'/'+fname+"_all_devs")
 
 
 
@@ -480,7 +483,7 @@ class VizRS:
         plt.legend(fontsize='large')
 
 
-        plt.savefig(OUTPUT_PATH+'/'+fname+'.png')
+        plt.savefig(OUTPUT_PATH+'/'+fname+'.eps', format='eps')
 
         time_taken=time.time()-time_taken
         print("\tTime Taken: ",time_taken)

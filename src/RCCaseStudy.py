@@ -397,7 +397,7 @@ class FSMBased:
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
         #VizRS.vizDevs(dList,maxT)
-        VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Hold&Skip-Next",fname="rc_fsm_hs")
+        #VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Hold&Skip-Next",fname="rc_fsm_hs")
         return (dList,maxT)
 
     def zeroAndSkipNext(P=[(10,10),(10,10)],MAX_DEADLINE=3,T=150):
@@ -512,7 +512,7 @@ if False:
     T=150
     ULSBased.zeroAndKill(P)
 
-if True:
+if False:
     P=[(10,10),(10,10)]
     T=150
     FSMBased.holdAndSkipAny(P)
@@ -523,19 +523,19 @@ if False:
     T=150
     ULSBased.allPolicies(P)
 
-if False:
+if True:
     P=[(10,10),(10,10)]
     T=150
     max_deadline=3
     FSMBased.allPolicies(P,max_deadline,T)
 
-if False:
+if True:
     P=[(10,10),(10,10)]
     T=150
     deadlines=[2,4,8,16]
     FSMBased.compHoldSkipAny(P,deadlines,T)
 
-if False:
+if True:
     PList=[]
     K=4
     '''for i in range(K):
