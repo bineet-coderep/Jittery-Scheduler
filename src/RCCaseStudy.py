@@ -86,6 +86,8 @@ class ULSBased:
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
         #VizRS.vizDevs(dList,maxT)
+        #print(len(reachORS),len(nominalReachSet))
+        #VizRS.vizAllRSPng(reachORS,nominalReachSet,policyname="Zero&Kill",fname="rc_uls_zk")
 
         return (dList,maxT)
 
@@ -395,6 +397,7 @@ class FSMBased:
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
         #VizRS.vizDevs(dList,maxT)
+        VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Hold&Skip-Next",fname="rc_fsm_hs")
         return (dList,maxT)
 
     def zeroAndSkipNext(P=[(10,10),(10,10)],MAX_DEADLINE=3,T=150):
@@ -504,25 +507,35 @@ def getRandInitSets():
 PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
 
 
+if False:
+    P=[(10,10),(10,10)]
+    T=150
+    ULSBased.zeroAndKill(P)
+
+if True:
+    P=[(10,10),(10,10)]
+    T=150
+    FSMBased.holdAndSkipAny(P)
+
 
 if False:
     P=[(10,10),(10,10)]
     T=150
     ULSBased.allPolicies(P)
 
-if True:
+if False:
     P=[(10,10),(10,10)]
     T=150
     max_deadline=3
     FSMBased.allPolicies(P,max_deadline,T)
 
-if True:
+if False:
     P=[(10,10),(10,10)]
     T=150
     deadlines=[2,4,8,16]
     FSMBased.compHoldSkipAny(P,deadlines,T)
 
-if True:
+if False:
     PList=[]
     K=4
     '''for i in range(K):

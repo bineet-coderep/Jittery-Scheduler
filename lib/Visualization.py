@@ -283,6 +283,50 @@ class VizRS:
         print("\tTime Taken: ",time_taken)
         print(">> STATUS: Reachable Sets Visualized!")
 
+    def vizAllRSPng(trajs,nomTrajs,th1=0,th2=1,policyname="Hold&Skip-Next",fname="all_trajectories"):
+
+        print(">> STATUS: Visualizing Reachable Sets . . .")
+        time_taken=time.time()
+
+        plt.figure()
+
+        nomTrajX=[]
+        nomTrajY=[]
+
+        ct=0
+        fnames=[]
+        for (rs,nom) in zip(trajs,nomTrajs):
+            #print(rs)
+            if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
+                (X,Y)=VizRS.getPlotsLineFine(rs,th1,th2)
+                plt.scatter(X,Y,s=5,color='g')
+
+                # Compute nominal trajectory
+                vecSize=nom[1].shape[1]
+                ptX=float(nom[0][th1])
+                ptY=float(nom[0][th2])
+                for i in range(vecSize):
+                    ptX=ptX+(nom[1][th1][i]*nom[2][i][0])
+                    ptY=ptY+(nom[1][th2][i]*nom[2][i][0])
+                nomTrajX.append(ptX)
+                nomTrajY.append(ptY)
+                # %%%%%%%%%%%%%%%%%%%%%%%%%%
+                fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
+                fnames.append(fnameTmp)
+                #plt.savefig(fnameTmp)
+            ct=ct+1
+            #plt.close()
+        plt.scatter(nomTrajX[0],nomTrajY[0],s=60,color='g',label="Reachable Sets ("+policyname+")")
+        plt.plot(nomTrajX,nomTrajY,markersize=20,linewidth=3,label="Nominal Trajectory",color='k')
+
+        plt.legend(fontsize='x-large')
+        plt.savefig(OUTPUT_PATH+'/'+fname+'.png')
+
+
+        time_taken=time.time()-time_taken
+        print("\tTime Taken: ",time_taken)
+        print(">> STATUS: Reachable Sets Visualized!")
+
     def vizDevs(devList,maxT):
         T=len(devList)
         X=list(range(T))
@@ -302,7 +346,11 @@ class VizRS:
         for (lb,devList,maxT) in zip(labels,devLists,maxTLists):
             plt.plot(X,devList,label=lb)
             plt.scatter(maxT,devList[maxT],s=100)
-            plt.text(maxT+0.1,devList[maxT],str(maxT)+","+"{:.2f}".format(devList[maxT]),fontsize='x-large')
+            if lb=="Hold&Skip-Next(2)":
+                plt.text(maxT,devList[maxT]-0.2,str(maxT)+","+"{:.2f}".format(devList[maxT]),fontsize='x-large')
+            else:
+                plt.text(maxT,devList[maxT],str(maxT)+","+"{:.2f}".format(devList[maxT]),fontsize='x-large')
+
 
         plt.legend(fontsize='x-large')
         plt.savefig(OUTPUT_PATH+'/'+fname+"_all_devs")
@@ -382,7 +430,7 @@ class VizRS:
         print("\tTime Taken: ",time_taken)
         print(">> STATUS: Reachable Sets Visualized!")
 
-    def vizAllNMissesFSM(statesList,th1=0,th2=1,fname="fsm_all_trajectories"):
+    def vizAllNMissesFSM(statesList,nomTrajs,th1=0,th2=1,policyname="Hold&Skip-Next",fname="fsm_all_trajectories"):
 
         print(">> STATUS: Visualizing Reachable Sets . . .")
         time_taken=time.time()
@@ -401,21 +449,38 @@ class VizRS:
                     s_i=statesList[i][t]
                     if s_i!=-1:
                         (X,Y)=VizRS.getPlotsLineFine(s_i,th1,th2)
-                        plt.scatter(X,Y,s=2)
+                        plt.scatter(X,Y,s=5,color='g')
 
-                fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
-                fnames.append(fnameTmp)
-                plt.savefig(fnameTmp)
             ct=ct+1
             #plt.close()
 
-        with imageio.get_writer(OUTPUT_PATH+'/'+fname+'gif.gif', mode='I',fps=2) as writer:
-            for filename in fnames:
-                image = imageio.imread(filename)
-                writer.append_data(image)
+        nomTrajX=[]
+        nomTrajY=[]
+        for nom in nomTrajs:
+            #print(rs)
+            if ct%math.floor(100/VIZ_PER_COVERAGE)==0:
+                # Compute nominal trajectory
+                vecSize=nom[1].shape[1]
+                ptX=float(nom[0][th1])
+                ptY=float(nom[0][th2])
+                for i in range(vecSize):
+                    ptX=ptX+(nom[1][th1][i]*nom[2][i][0])
+                    ptY=ptY+(nom[1][th2][i]*nom[2][i][0])
+                nomTrajX.append(ptX)
+                nomTrajY.append(ptY)
+                # %%%%%%%%%%%%%%%%%%%%%%%%%%
+                fnameTmp=OUTPUT_PATH+'/'+fname+str(ct)+".png"
+                fnames.append(fnameTmp)
+                #plt.savefig(fnameTmp)
+            ct=ct+1
+            #plt.close()
+        plt.scatter(nomTrajX[0],nomTrajY[0],s=60,color='g',label="Reachable Sets ("+policyname+")")
+        plt.plot(nomTrajX,nomTrajY,markersize=20,linewidth=3,label="Nominal Trajectory",color='k')
 
-        for filename in set(fnames):
-            os.remove(filename)
+        plt.legend(fontsize='large')
+
+
+        plt.savefig(OUTPUT_PATH+'/'+fname+'.png')
 
         time_taken=time.time()-time_taken
         print("\tTime Taken: ",time_taken)
