@@ -510,7 +510,7 @@ if False:
     T=150
     ULSBased.allPolicies(P)
 
-if False:
+if True:
     P=[(10,10),(10,10)]
     T=150
     max_deadline=3
