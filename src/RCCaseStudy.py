@@ -516,7 +516,7 @@ if False:
     max_deadline=3
     FSMBased.allPolicies(P,max_deadline,T)
 
-if False:
+if True:
     P=[(10,10),(10,10)]
     T=150
     deadlines=[2,4,8,16]

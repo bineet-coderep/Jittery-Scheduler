@@ -296,15 +296,15 @@ class VizRS:
         T=len(devLists[0])
         X=list(range(T))
         plt.figure()
-        plt.xlabel("Deviation",fontsize=15)
-        plt.ylabel("Time",fontsize=15)
+        plt.xlabel("Deviation",fontsize=20)
+        plt.ylabel("Time",fontsize=20)
 
         for (lb,devList,maxT) in zip(labels,devLists,maxTLists):
             plt.plot(X,devList,label=lb)
             plt.scatter(maxT,devList[maxT],s=100)
-            plt.text(maxT+0.1,devList[maxT],str(maxT)+","+"{:.2f}".format(devList[maxT]),fontsize='large')
+            plt.text(maxT+0.1,devList[maxT],str(maxT)+","+"{:.2f}".format(devList[maxT]),fontsize='x-large')
 
-        plt.legend(fontsize='large')
+        plt.legend(fontsize='x-large')
         plt.savefig(OUTPUT_PATH+'/'+fname+"_all_devs")
 
 
