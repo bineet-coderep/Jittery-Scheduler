@@ -15,7 +15,9 @@ from lib.Deviation import *
 from lib.LQRSolver import *
 from lib.BoundedTree import *
 from lib.FSMBased import *
+from lib.SetOperations import *
 import time
+import matplotlib.pyplot as plt
 
 class ULSBased:
 
@@ -490,37 +492,77 @@ class FSMBased:
         VizRS.vizAllDevs(labels,allDevLists,maxTLists,"ecrts21_hsa_comp_init_fsm")
 
 
+class CompStability:
 
-PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
+    def isSafe(P=[(10,10),(10,10)],T=150,methodName="ZeroKill",maxDeadline=3,safeDev=4):
+        C=[0]*4
+        V=np.zeros((4,4))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=P+[(0,0)]*2
+        initialSet=(C,V,P)
+        nominalSeqn=[1]*T
+        p=Benchmarks.ECRTS21.A.shape[0]
 
+        nominalReachSet=BoundedTree(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K).reachSetHoldKill(initialSet,nominalSeqn)
+        ulsGen=ULSGen(Benchmarks.ECRTS21.A,Benchmarks.ECRTS21.B,Benchmarks.ECRTS21.C,Benchmarks.ECRTS21.D,Benchmarks.ECRTS21.K,maxDeadline,methodName)
+
+        # Using ULS method
+        time_taken_uls=time.time()
+        uncertainMat=ulsGen.getUncertainMatrix()
+        deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
+        (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
+        time_taken_uls=time.time()-time_taken_uls
+
+        # Using FSM Based
+        time_taken_fsm=time.time()
+        matList=ulsGen.getAllPossibleMatrices()
+        hList=[matList[0]]*(maxDeadline+1)
+        mList=[matList[1]]*maxDeadline
+        automaton=(maxDeadline,hList,mList)
+        rec=RecRel(automaton,initialSet,T,nominalReachSet)
+        stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
+        time_taken_fsm=time.time()-time_taken_fsm
+
+        # Report
+        print("\tULS time taken: ",time_taken_uls,"; \tFSM time taken: ",time_taken_fsm)
+        print("\tULS max dev: ",dList_ULS[maxT_ULS],"; \tFSM time taken: ",dList_FSM[maxT_FSM])
+
+        # Plot the safety envelopes
+        Viz.plotSafetyEnv(nominalReachSet,dList_ULS,maxT_ULS,safeDev,fname="uls-"+methodName)
+        Viz.plotSafetyEnv(nominalReachSet,dList_FSM,maxT_FSM,safeDev,fname="fsm-"+methodName)
+
+class Viz:
+
+    def plotSafetyEnv(nominalRS,dList,maxT,safeDev,fname):
+        th1=0
+        th2=1
+
+        plt.figure()
+        fig, ax = plt.subplots()
+        nominal=SetOp.getSimpleRep(nominalRS)
+        H=len(nominal)
+        nominalX=[nominal[t][th1] for t in range(H)]
+        nominalY=[nominal[t][th2] for t in range(H)]
+
+        for t in range(H):
+            #print(nominal[t][th1],nominal[t][th2])
+            circ1=ax.add_patch(plt.Circle((nominal[t][th1], nominal[t][th2]), safeDev, color='cyan',alpha=1))
+            ax.add_patch(circ1)
+            '''if dList[t]>safeDev:
+                #plt.scatter(nominal[t][th1], nominal[t][th2],marker='X',markersize=3,color='r')
+                circ2=ax.add_patch(plt.Circle((nominal[t][th1], nominal[t][th2]), dList[t], color='red',alpha=0.5))
+                ax.add_patch(circ2)
+            else:
+                circ2=ax.add_patch(plt.Circle((nominal[t][th1], nominal[t][th2]), dList[t], color='green',alpha=0.5))
+                ax.add_patch(circ2)'''
+
+        plt.plot(nominalX,nominalY,color='k',markersize=2,linewidth=3)
+
+        plt.show()
+        plt.savefig(OUTPUT_PATH+'/'+fname+"_safety_envelope"+'.pdf', format='pdf')
 
 
 if True:
-    P=[(10,10),(10,10)]
-    T=150
-    ULSBased.allPolicies(P)
-
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    max_deadline=1
-    FSMBased.allPolicies(P,max_deadline,T)
-
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    deadlines=[2,4,8,16]
-    FSMBased.compHoldSkipAny(P,deadlines,T)
-
-if False:
-    PList=[]
-    K=4
-    '''for i in range(K):
-        x=random.randint(-10,10)
-        y=random.randint(-10,10)
-        P=[(x,x),(y,y)]
-        PList.append(P)'''
-    PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
-    T=150
-    max_deadline=1
-    FSMBased.compHoldSkipAnyInitSet(PList,max_deadline,T)
+    ULSBased.zeroAndKill()
+    #CompStability.isSafe()

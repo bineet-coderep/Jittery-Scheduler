@@ -491,36 +491,43 @@ class FSMBased:
 
 
 
-PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
+class CompStability:
+
+    def isSafe(P=[(10,10),(10,10)],T=150,methodName="ZeroKill",maxDeadline=3,safeDev=1.92):
+        C=[0]*4
+        V=np.zeros((4,4))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=P+[(0,0)]*2
+        initialSet=(C,V,P)
+        nominalSeqn=[1]*T
+        p=Benchmarks.Steering.A.shape[0]
 
 
+        nominalReachSet=BoundedTree(Benchmarks.Steering.A,Benchmarks.Steering.B,Benchmarks.Steering.C,Benchmarks.Steering.D,Benchmarks.Steering.K).reachSetHoldKill(initialSet,nominalSeqn)
+        ulsGen=ULSGen(Benchmarks.Steering.A,Benchmarks.Steering.B,Benchmarks.Steering.C,Benchmarks.Steering.D,Benchmarks.Steering.K,maxDeadline,methodName)
 
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    ULSBased.allPolicies(P)
+        # Using ULS method
+        time_taken_uls=time.time()
+        uncertainMat=ulsGen.getUncertainMatrix()
+        deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
+        (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
+        time_taken_uls=time.time()-time_taken_uls
 
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    max_deadline=1
-    FSMBased.allPolicies(P,max_deadline,T)
+        # Using FSM Based
+        time_taken_fsm=time.time()
+        matList=ulsGen.getAllPossibleMatrices()
+        hList=[matList[0]]*(maxDeadline+1)
+        mList=[matList[1]]*maxDeadline
+        automaton=(maxDeadline,hList,mList)
+        rec=RecRel(automaton,initialSet,T,nominalReachSet)
+        stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
+        time_taken_fsm=time.time()-time_taken_fsm
 
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    deadlines=[2,4,8,16]
-    FSMBased.compHoldSkipAny(P,deadlines,T)
+        # Report
+        print("\tULS time taken: ",time_taken_uls,"; \tFSM time taken: ",time_taken_fsm)
+        print("\tULS max dev: ",dList_ULS[maxT_ULS],"; \tFSM time taken: ",dList_FSM[maxT_FSM])
 
-if False:
-    PList=[]
-    K=4
-    '''for i in range(K):
-        x=random.randint(-10,10)
-        y=random.randint(-10,10)
-        P=[(x,x),(y,y)]
-        PList.append(P)'''
-    PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
-    T=150
-    max_deadline=1
-    FSMBased.compHoldSkipAnyInitSet(PList,max_deadline,T)
+        # Plot the safety envelopes
+        Viz.plotSafetyEnv(nominalReachSet,dList_ULS,maxT_ULS,safeDev,fname="rc-uls-"+methodName)
+        Viz.plotSafetyEnv(nominalReachSet,dList_FSM,maxT_FSM,safeDev,fname="rc-fsm-"+methodName)

@@ -498,72 +498,161 @@ class FSMBased:
         VizRS.vizAllDevs(labels,allDevLists,maxTLists,"rc_hsa_comp_init_fsm")
 
 
+class CompStability:
 
-def getRandInitSets():
-    K=4
-    PList=[]
-    for i in range(K):
-        x=random.randint(-10,10)
-        y=random.randint(-10,10)
-        P=[(x,x),(y,y)]
-        PList.append(P)
-    print(PList)
+    def isSafe(P=[(10,10),(10,10)],T=150,methodName="ZeroKill",maxDeadline=3,safeDev=1.92):
+        C=[0]*3
+        V=np.zeros((3,3))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=P+[(0,0)]*1
+        initialSet=(C,V,P)
+        nominalSeqn=[1]*T
+        p=Benchmarks.DC.A.shape[0]
 
-PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
+
+        nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
+
+        # Using ULS method
+        time_taken_uls=time.time()
+        uncertainMat=ulsGen.getUncertainMatrix()
+        deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
+        (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
+        time_taken_uls=time.time()-time_taken_uls
+
+        # Using FSM Based
+        time_taken_fsm=time.time()
+        matList=ulsGen.getAllPossibleMatrices()
+        hList=[matList[0]]*(maxDeadline+1)
+        mList=[matList[1]]*maxDeadline
+        automaton=(maxDeadline,hList,mList)
+        rec=RecRel(automaton,initialSet,T,nominalReachSet)
+        stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
+        time_taken_fsm=time.time()-time_taken_fsm
+
+        # Report
+        print("\tULS time taken: ",time_taken_uls,"; \tFSM time taken: ",time_taken_fsm)
+        print("\tULS max dev: ",dList_ULS[maxT_ULS],"; \tFSM time taken: ",dList_FSM[maxT_FSM])
+
+        # Plot the safety envelopes
+        Viz.plotSafetyEnv(nominalReachSet,dList_ULS,maxT_ULS,safeDev,fname="rc-uls-"+methodName)
+        Viz.plotSafetyEnv(nominalReachSet,dList_FSM,maxT_FSM,safeDev,fname="rc-fsm-"+methodName)
+
+class CompScalability:
+
+    def timeH(P=[(10,10),(10,10)],timeSteps=[50,300,50],methodName="ZeroKill",maxDeadline=3):
+        C=[0]*3
+        V=np.zeros((3,3))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=P+[(0,0)]*1
+        initialSet=(C,V,P)
+        p=Benchmarks.DC.A.shape[0]
+
+        ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
+
+        # Using ULS method
+        timeList_ULS=[]
+        maxDevList_ULS=[]
+        labels_ULS=[]
+        uncertainMat=ulsGen.getUncertainMatrix()
+        for T in range(timeSteps[0],timeSteps[1],timeSteps[2]):
+            time_taken_uls=time.time()
+            nominalSeqn=[1]*T
+            nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+            deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
+            (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
+            time_taken_uls=time.time()-time_taken_uls
+            timeList_ULS.append(time_taken_uls)
+            maxDevList_ULS.append(dList_ULS[maxT_ULS])
+            labels_ULS.append(str("{:.2f}".format(dList_ULS[maxT_ULS]))+","+str(T))
+
+
+        Viz.plotScalability(timeList_ULS,maxDevList_ULS,labels_ULS)
+
+        # Using FSM Based
+        timeList_FSM=[]
+        maxDevList_FSM=[]
+        labels_FSM=[]
+        matList=ulsGen.getAllPossibleMatrices()
+        hList=[matList[0]]*(maxDeadline+1)
+        mList=[matList[1]]*maxDeadline
+        automaton=(maxDeadline,hList,mList)
+        for T in range(timeSteps[0],timeSteps[1],timeSteps[2]):
+            time_taken_fsm=time.time()
+            nominalSeqn=[1]*T
+            nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+            rec=RecRel(automaton,initialSet,T,nominalReachSet)
+            stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
+            time_taken_fsm=time.time()-time_taken_fsm
+            timeList_FSM.append(time_taken_fsm)
+            maxDevList_FSM.append(dList_FSM[maxT_FSM])
+            labels_FSM.append(str("{:.2f}".format(dList_FSM[maxT_FSM]))+", "+str(T))
+
+
+        Viz.plotScalability(timeList_FSM,maxDevList_FSM,labels_FSM)
+
+    def maxDeadlineVary(P=[(10,10),(10,10)],deadlines=[1,6,1],methodName="ZeroKill",T=150):
+        C=[0]*3
+        V=np.zeros((3,3))
+        V[0][0]=1.0
+        V[1][1]=1.0
+        P=P+[(0,0)]*1
+        initialSet=(C,V,P)
+        p=Benchmarks.DC.A.shape[0]
+
+        # Using ULS method
+        timeList_ULS=[]
+        maxDevList_ULS=[]
+        labels_ULS=[]
+        for maxDeadline in range(deadlines[0],deadlines[1],deadlines[2]):
+            time_taken_uls=time.time()
+            ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
+            uncertainMat=ulsGen.getUncertainMatrix()
+            nominalSeqn=[1]*T
+            nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+            deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
+            (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
+            time_taken_uls=time.time()-time_taken_uls
+            timeList_ULS.append(time_taken_uls)
+            maxDevList_ULS.append(dList_ULS[maxT_ULS])
+            labels_ULS.append(str("{:.2f}".format(dList_ULS[maxT_ULS]))+","+str(maxDeadline))
+
+
+        Viz.plotScalability(timeList_ULS,maxDevList_ULS,labels_ULS)
+
+        # Using FSM Based
+        timeList_FSM=[]
+        maxDevList_FSM=[]
+        labels_FSM=[]
+        for maxDeadline in range(deadlines[0],deadlines[1],deadlines[2]):
+            time_taken_fsm=time.time()
+            ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
+            matList=ulsGen.getAllPossibleMatrices()
+            hList=[matList[0]]*(maxDeadline+1)
+            mList=[matList[1]]*maxDeadline
+            automaton=(maxDeadline,hList,mList)
+            nominalSeqn=[1]*T
+            nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+            rec=RecRel(automaton,initialSet,T,nominalReachSet)
+            stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
+            time_taken_fsm=time.time()-time_taken_fsm
+            timeList_FSM.append(time_taken_fsm)
+            maxDevList_FSM.append(dList_FSM[maxT_FSM])
+            labels_FSM.append(str("{:.2f}".format(dList_FSM[maxT_FSM]))+", "+str(maxDeadline))
+
+
+        Viz.plotScalability(timeList_FSM,maxDevList_FSM,labels_FSM)
+
+
+
+
 
 
 if False:
-    P=[(10,10),(10,10)]
-    T=20
-    ULSBased.holdAndKill(P)
+    CompStability.isSafe()
 
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    ULSBased.zeroAndKill(P)
-
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    FSMBased.zeroAndKill(P)
-
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    FSMBased.holdAndKill(P)
-
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    FSMBased.zeroAndSkipNext(P)
-
-
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    ULSBased.allPolicies(P)
-
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    max_deadline=3
-    FSMBased.allPolicies(P,max_deadline,T)
-
-if False:
-    P=[(10,10),(10,10)]
-    T=150
-    deadlines=[2,4,8,16]
-    FSMBased.compHoldSkipAny(P,deadlines,T)
-
-if False:
-    PList=[]
-    K=4
-    '''for i in range(K):
-        x=random.randint(-10,10)
-        y=random.randint(-10,10)
-        P=[(x,x),(y,y)]
-        PList.append(P)'''
-    PList=[[(-7, -7), (-4, -4)], [(-6, -6), (-8, -8)], [(9, 9), (9, 9)], [(-5, -5), (2, 2)]]
-    T=150
-    max_deadline=3
-    FSMBased.compHoldSkipAnyInitSet(PList,max_deadline,T)
+if True:
+    CompScalability.timeH()
+    CompScalability.maxDeadlineVary()

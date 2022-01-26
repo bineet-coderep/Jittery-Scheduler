@@ -14,6 +14,7 @@ import time
 import os
 import imageio
 from lib.StarOperations import *
+from lib.SetOperations import *
 #import pypolycontain as pp
 
 
@@ -488,3 +489,49 @@ class VizRS:
         time_taken=time.time()-time_taken
         print("\tTime Taken: ",time_taken)
         print(">> STATUS: Reachable Sets Visualized!")
+
+class Viz:
+
+    def plotSafetyEnv(nominalRS,dList,maxT,safeDev,fname):
+        th1=0
+        th2=1
+
+        plt.figure()
+        fig, ax = plt.subplots()
+        ax.set_xlabel("State 0")
+        ax.set_ylabel("State 1")
+        nominal=SetOp.getSimpleRep(nominalRS)
+        H=len(nominal)
+        nominalX=[nominal[t][th1] for t in range(H)]
+        nominalY=[nominal[t][th2] for t in range(H)]
+
+        for t in range(H):
+            #print(nominal[t][th1],nominal[t][th2])
+            circ1=ax.add_patch(plt.Circle((nominal[t][th1], nominal[t][th2]), safeDev, color='cyan',alpha=1))
+            ax.add_patch(circ1)
+
+        for t in range(H):
+            circ2=ax.add_patch(plt.Circle((nominal[t][th1], nominal[t][th2]), dList[t], color='green',alpha=0.2))
+            ax.add_patch(circ2)
+
+        for t in range(H):
+            if dList[t]>safeDev:
+                circ2=ax.add_patch(plt.Circle((nominal[t][th1], nominal[t][th2]), dList[t], color='red',alpha=0.2))
+                ax.add_patch(circ2)
+                plt.text(nominal[t][th1],nominal[t][th2],"("+str("{:.2f}".format(dList[t]))+","+str(t)+")",horizontalalignment='right',color='k')
+
+        plt.plot(nominalX,nominalY,color='k',markersize=2,linewidth=3)
+
+        plt.show()
+        #ax.savefig(OUTPUT_PATH+'/'+fname+"_safety_envelope"+'.pdf', format='pdf')
+
+    def plotScalability(timeList,devList,labels):
+        plt.figure()
+        plt.xlabel("Compute Time")
+        plt.ylabel("Max Deviation")
+
+        for (t,d,l) in zip(timeList,devList,labels):
+            plt.scatter(t,d,s=200)
+            plt.text(t,d,l,horizontalalignment='left',color='k')
+
+        plt.show()

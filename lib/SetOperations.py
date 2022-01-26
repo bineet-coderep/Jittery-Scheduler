@@ -123,6 +123,28 @@ class SetOp:
 
         return dia
 
+    def getSimpleRep(rsList):
+        nominalRS=[]
+        n=len(rsList[0][0])
+        r=rsList[0][1].shape[1]
+        for rs in rsList:
+            P=rs[2]
+            Vp=rs[1]
+            Cp=rs[0]
+            pt=[]
+            for i in range(n):
+                s=0
+                s_min=0
+                for j in range(r):
+                    s=s+(mp.mpi(P[j][0],P[j][1])*Vp[i][j])
+                s=s+Cp[i]
+                s_min=float(mp.nstr(s).split(',')[0][1:])
+                pt.append(s_min)
+            nominalRS.append(pt)
+        return nominalRS
+
+
+
     def boxHull(rsList):
         '''
         Given a set of reachable sets, compute a box-hull
