@@ -16,6 +16,7 @@ from lib.LQRSolver import *
 from lib.BoundedTree import *
 from lib.FSMBased import *
 import time
+import statistics as stat
 
 class ULSBased:
 
@@ -550,6 +551,8 @@ class CompScalability:
         initialSet=(C,V,P)
         p=Benchmarks.DC.A.shape[0]
 
+        TRIALS=10
+
         ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
 
         # Using ULS method
@@ -558,13 +561,16 @@ class CompScalability:
         labels_ULS=[]
         uncertainMat=ulsGen.getUncertainMatrix()
         for T in range(timeSteps[0],timeSteps[1],timeSteps[2]):
-            time_taken_uls=time.time()
-            nominalSeqn=[1]*T
-            nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
-            deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
-            (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
-            time_taken_uls=time.time()-time_taken_uls
-            timeList_ULS.append(time_taken_uls)
+            tTmp=[]
+            for trial in range(TRIALS):
+                time_taken_uls=time.time()
+                nominalSeqn=[1]*T
+                nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+                deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
+                (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
+                time_taken_uls=time.time()-time_taken_uls
+                tTmp.append(time_taken_uls)
+            timeList_ULS.append(stat.mean(tTmp))
             maxDevList_ULS.append(dList_ULS[maxT_ULS])
             labels_ULS.append(str("{:.2f}".format(dList_ULS[maxT_ULS]))+","+str(T))
 
@@ -580,13 +586,16 @@ class CompScalability:
         mList=[matList[1]]*maxDeadline
         automaton=(maxDeadline,hList,mList)
         for T in range(timeSteps[0],timeSteps[1],timeSteps[2]):
-            time_taken_fsm=time.time()
-            nominalSeqn=[1]*T
-            nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
-            rec=RecRel(automaton,initialSet,T,nominalReachSet)
-            stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
-            time_taken_fsm=time.time()-time_taken_fsm
-            timeList_FSM.append(time_taken_fsm)
+            tTmp=[]
+            for trial in range(TRIALS):
+                time_taken_fsm=time.time()
+                nominalSeqn=[1]*T
+                nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+                rec=RecRel(automaton,initialSet,T,nominalReachSet)
+                stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
+                time_taken_fsm=time.time()-time_taken_fsm
+                tTmp.append(time_taken_fsm)
+            timeList_FSM.append(stat.mean(tTmp))
             maxDevList_FSM.append(dList_FSM[maxT_FSM])
             labels_FSM.append(str("{:.2f}".format(dList_FSM[maxT_FSM]))+", "+str(T))
 
@@ -602,20 +611,25 @@ class CompScalability:
         initialSet=(C,V,P)
         p=Benchmarks.DC.A.shape[0]
 
+        TRIALS=10
+
         # Using ULS method
         timeList_ULS=[]
         maxDevList_ULS=[]
         labels_ULS=[]
         for maxDeadline in range(deadlines[0],deadlines[1],deadlines[2]):
-            time_taken_uls=time.time()
-            ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
-            uncertainMat=ulsGen.getUncertainMatrix()
-            nominalSeqn=[1]*T
-            nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
-            deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
-            (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
-            time_taken_uls=time.time()-time_taken_uls
-            timeList_ULS.append(time_taken_uls)
+            tTmp=[]
+            for trial in range(TRIALS):
+                time_taken_uls=time.time()
+                ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
+                uncertainMat=ulsGen.getUncertainMatrix()
+                nominalSeqn=[1]*T
+                nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+                deviation=Deviation(uncertainMat[0],uncertainMat[1],initialSet,T,nominalReachSet)
+                (reachORS,dList_ULS,maxT_ULS)=deviation.getDeviations(p)
+                time_taken_uls=time.time()-time_taken_uls
+                tTmp.append(time_taken_uls)
+            timeList_ULS.append(stat.mean(tTmp))
             maxDevList_ULS.append(dList_ULS[maxT_ULS])
             labels_ULS.append(str("{:.2f}".format(dList_ULS[maxT_ULS]))+","+str(maxDeadline))
 
@@ -627,18 +641,21 @@ class CompScalability:
         maxDevList_FSM=[]
         labels_FSM=[]
         for maxDeadline in range(deadlines[0],deadlines[1],deadlines[2]):
-            time_taken_fsm=time.time()
-            ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
-            matList=ulsGen.getAllPossibleMatrices()
-            hList=[matList[0]]*(maxDeadline+1)
-            mList=[matList[1]]*maxDeadline
-            automaton=(maxDeadline,hList,mList)
-            nominalSeqn=[1]*T
-            nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
-            rec=RecRel(automaton,initialSet,T,nominalReachSet)
-            stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
-            time_taken_fsm=time.time()-time_taken_fsm
-            timeList_FSM.append(time_taken_fsm)
+            tTmp=[]
+            for trial in range(TRIALS):
+                time_taken_fsm=time.time()
+                ulsGen=ULSGen(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K,maxDeadline,methodName)
+                matList=ulsGen.getAllPossibleMatrices()
+                hList=[matList[0]]*(maxDeadline+1)
+                mList=[matList[1]]*maxDeadline
+                automaton=(maxDeadline,hList,mList)
+                nominalSeqn=[1]*T
+                nominalReachSet=BoundedTree(Benchmarks.DC.A,Benchmarks.DC.B,Benchmarks.DC.C,Benchmarks.DC.D,Benchmarks.DC.K).reachSetHoldKill(initialSet,nominalSeqn)
+                rec=RecRel(automaton,initialSet,T,nominalReachSet)
+                stateList,dList_FSM,maxT_FSM=rec.getDeviations(p)
+                time_taken_fsm=time.time()-time_taken_fsm
+                tTmp.append(time_taken_fsm)
+            timeList_FSM.append(stat.mean(tTmp))
             maxDevList_FSM.append(dList_FSM[maxT_FSM])
             labels_FSM.append(str("{:.2f}".format(dList_FSM[maxT_FSM]))+", "+str(maxDeadline))
 
@@ -654,5 +671,5 @@ if False:
     CompStability.isSafe()
 
 if True:
-    CompScalability.timeH()
+    #CompScalability.timeH()
     CompScalability.maxDeadlineVary()
