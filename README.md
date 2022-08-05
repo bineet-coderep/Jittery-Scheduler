@@ -49,19 +49,19 @@ Once the dependencies are installed properly, and the path variable is set, foll
 
 ### Case studies
 
-We offer four case studies:
+We offer the following case studies:
 
 1. [RC Network](https://www.abebooks.com/servlet/SearchResults?sts=t&tn=Signals+and+Linear+Systems&x=51&y=16).
 2. [Electric Steering](https://drops.dagstuhl.de/opus/volltexte/2020/12384/pdf/LIPIcs-ECRTS-2020-21.pdf).
 3. [Unstable Second-Order System](https://drops.dagstuhl.de/opus/volltexte/2020/12384/pdf/LIPIcs-ECRTS-2020-21.pdf).
 
-Here, we illustrate the Electric Steering case study, as the other one can be run in similar fashion.
+Here, we illustrate the RC Network case study, as the other one can be run in similar fashion.
 
 1. ```shell
    cd src/
    ```
 
 2. ```shell
-   python SteeringCaseStudy.py
+   python RCCaseStudy.py
    ```
 
