@@ -274,7 +274,7 @@ class FSMBased:
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
         #VizRS.vizDevs(dList,maxT)
-        VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Hold&Kill",fname="rc_fsm_hk")
+        #VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Hold&Kill",fname="rc_fsm_hk")
         return (dList,maxT)
 
     def zeroAndKill(P=[(10,10),(10,10)],MAX_DEADLINE=3,T=150):
@@ -314,7 +314,7 @@ class FSMBased:
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
         #VizRS.vizDevs(dList,maxT)
-        VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Zero&Kill",fname="rc_fsm_zk")
+        #VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Zero&Kill",fname="rc_fsm_zk")
         return (dList,maxT)
 
     def holdAndSkip(P=[(10,10),(10,10)],MAX_DEADLINE=3,T=150):
@@ -402,7 +402,7 @@ class FSMBased:
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
         #VizRS.vizDevs(dList,maxT)
-        VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Hold&Skip-Next",fname="rc_fsm_hs")
+        #VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Hold&Skip-Next",fname="rc_fsm_hs")
         return (dList,maxT)
 
     def zeroAndSkipNext(P=[(10,10),(10,10)],MAX_DEADLINE=3,T=150):
@@ -443,7 +443,7 @@ class FSMBased:
         print("\tTotal Time Taken: ",time.time()-time_taken)
         print(">> End of Report!")
         #VizRS.vizDevs(dList,maxT)
-        VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Zero&Skip-Next",fname="rc_fsm_zs")
+        #VizRS.vizAllNMissesFSM(stateList,nominalReachSet,policyname="Zero&Skip-Next",fname="rc_fsm_zs")
         return (dList,maxT)
 
     def allPolicies(P=[(10,10),(10,10)],MAX_DEADLINE=3,T=150):
@@ -465,7 +465,7 @@ class FSMBased:
         allDevLists=[dList_HK,dList_ZK,dList_HSA,dList_ZSN]
         maxTLists=[maxT_HK,maxT_ZK,maxT_HSA,maxT_ZSN]
 
-        VizRS.vizAllDevs(labels,allDevLists,maxTLists,"rc_fsm")
+        #VizRS.vizAllDevs(labels,allDevLists,maxTLists,"rc_fsm")
 
     def compHoldSkipAny(P=[(10,10),(10,10)],missList=[2,4,8,16],T=150):
 
@@ -665,11 +665,13 @@ class CompScalability:
 
 
 
+if True:
+    FSMBased.allPolicies()
 
 
 if False:
     CompStability.isSafe()
 
-if True:
+if False:
     #CompScalability.timeH()
     CompScalability.maxDeadlineVary()

@@ -564,5 +564,5 @@ class Viz:
 
 
 if True:
-    ULSBased.zeroAndKill()
+    ULSBased.allPolicies()
     #CompStability.isSafe()
